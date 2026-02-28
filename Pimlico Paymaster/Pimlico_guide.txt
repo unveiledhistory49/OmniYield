@@ -1,0 +1,138 @@
+**Here¡¯s the exact, battle-tested way to implement Pimlico in OmniYield (2026 meta).**  
+This turns your ¡°Deposit¡± button into true **gasless magic** on Base ¡ª users click once, no wallet pop-up for gas, no ETH needed. You sponsor via Pimlico¡¯s Verifying Paymaster (or let them pay in USDC with ERC-20 Paymaster).  
+
+It fits perfectly with your wagmi + viem + Next.js stack and makes the AA section of your portfolio look senior-level.
+
+### 1. One-Time Setup (5 minutes)
+
+1. Go to **[dashboard.pimlico.io](https://dashboard.pimlico.io)** ¡ú Sign up (free tier is generous).
+2. Create a new API key ¡ú copy it.
+3. Fund your Pimlico balance (USDC or ETH) in the ¡°Payment Methods¡± tab. This pays for the gas you sponsor.
+4. (Optional but recommended) Set up **Sponsorship Policies** so only deposits to your OmniYield vault are sponsored.
+
+Base is fully supported (mainnet + Sepolia for testing).
+
+Check @pimlico_key.txt for the API key
+
+### 2. Install the Packages
+
+```bash
+npm install @pimlicolabs/permissionless viem @tanstack/react-query
+# If using wagmi (recommended for your frontend)
+npm install @permissionless/wagmi
+```
+
+### 3. Core Integration ¨C Gasless Deposit Button
+
+Add this in your deposit component (`components/DepositForm.tsx`).
+
+```tsx
+import { useAccount, useWalletClient } from 'wagmi'
+import { createPublicClient, http, parseAbi, getAddress } from 'viem'
+import { base } from 'viem/chains'
+import {
+  createPimlicoPaymasterClient,
+  createPimlicoBundlerClient,
+  createSmartAccountClient,
+  signerToSafeSmartAccount, // or toSimpleSmartAccount
+  privateKeyToAccount, // only for testing
+} from '@pimlicolabs/permissionless'
+import { ENTRYPOINT_ADDRESS_V07 } from '@pimlicolabs/permissionless' // v0.7 entrypoint
+
+// Your deployed ERC-4626 vault on Base
+const VAULT_ADDRESS = '0xYourVaultAddressHere' as const
+
+const apiKey = process.env.NEXT_PUBLIC_PIMLICO_API_KEY!
+const pimlicoUrl = `https://api.pimlico.io/v2/base/rpc?apikey=${apiKey}`
+
+// Public client (reuse your existing one)
+const publicClient = createPublicClient({ chain: base, transport: http() })
+
+// Pimlico clients
+const paymasterClient = createPimlicoPaymasterClient({
+  transport: http(pimlicoUrl),
+  entryPoint: ENTRYPOINT_ADDRESS_V07,
+})
+
+const bundlerClient = createPimlicoBundlerClient({
+  transport: http(pimlicoUrl),
+  entryPoint: ENTRYPOINT_ADDRESS_V07,
+})
+
+// In your component (React hook)
+export function GaslessDeposit({ amount }: { amount: bigint }) {
+  const { address } = useAccount()
+  const { data: walletClient } = useWalletClient()
+
+  const handleGaslessDeposit = async () => {
+    if (!walletClient || !address) return
+
+    // 1. Create smart account from user's connected wallet (EOA as owner)
+    const smartAccount = await signerToSafeSmartAccount(publicClient, {
+      signer: walletClient, // user's wagmi walletClient
+      entryPoint: ENTRYPOINT_ADDRESS_V07,
+      safeVersion: '1.4.1',
+    })
+
+    // 2. Create smart account client with Pimlico middleware
+    const smartAccountClient = createSmartAccountClient({
+      account: smartAccount,
+      chain: base,
+      bundlerTransport: http(pimlicoUrl),
+      middleware: {
+        gasPrice: async () => (await bundlerClient.getUserOperationGasPrice()).fast,
+        sponsorUserOperation: paymasterClient.sponsorUserOperation, // ¡û This makes it gasless!
+      },
+    })
+
+    // 3. Build the deposit call to your ERC-4626 vault
+    const depositCalldata = await publicClient.simulateContract({
+      address: VAULT_ADDRESS,
+      abi: parseAbi(['function deposit(uint256 assets, address receiver)']),
+      functionName: 'deposit',
+      args: [amount, address],
+    })
+
+    // 4. Send gasless!
+    const txHash = await smartAccountClient.sendTransaction({
+      to: VAULT_ADDRESS,
+      data: depositCalldata.data,
+      value: 0n,
+    })
+
+    console.log('Gasless deposit included!', `https://basescan.org/tx/${txHash}`)
+  }
+
+  return (
+    <button onClick={handleGaslessDeposit} className="...">
+      Deposit Gaslessly (Pimlico)
+    </button>
+  )
+}
+```
+
+**That¡¯s it.** One button = gasless deposit. The user never sees a gas fee.
+
+### 4. Two Paymaster Flavors (Choose or Offer Both)
+
+**A. Verifying Paymaster (True Gasless ¨C Recommended for UX)**  
+- You pay the gas from your Pimlico balance.  
+- Users love it. Add in portfolio: ¡°Deposit with 0 ETH required¡±.  
+- Control via Sponsorship Policies (only allow calls to your vault).
+
+**B. ERC-20 Paymaster (User pays in USDC)**  
+Add this to the `sendTransaction` call:
+
+```ts
+paymasterContext: { token: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' }, // USDC on Base
+```
+
+Users approve USDC once ¡ú gas paid in USDC. Perfect upsell.
+
+### 5. Advanced Pimlico Features (Make It Nuclear)
+
+- **Session Keys** ¡ú Let users approve ¡°farm forever¡± without repeated signatures. Use permissionless.js `createSessionKey` + Pimlico¡¯s session-key support.
+- **Batched Txns** ¡ú Deposit + stake in one click (add multiple calls array).
+- **Sponsorship Policies** ¡ú In dashboard ¡ú only sponsor deposits > $10 or from new users (save money).
+- **wagmi Integration** (even smoother) ¡ú Use `@permissionless/wagmi` to wrap your wagmi config with Pimlico smart account support.
+

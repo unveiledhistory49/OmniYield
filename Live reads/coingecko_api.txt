@@ -1,0 +1,164 @@
+CG-pa4Vb3oG5wbZTghqii6LPP5d
+
+
+Example usage: Get the Bitcoin price with our API
+Coin Price by IDs
+
+https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=bitcoin&x_cg_demo_api_key=CG-pa4Vb3oG5wbZTghqii6LPP5d
+
+
+
+Here¡¯s the **exact, 2026-best-practice implementation** using your key on the Pro API (`pro-api.coingecko.com`). This replaces **every** mocked TVL, price, APY curve, and chart value with real-time USD data.
+
+### 1. Setup (2 minutes)
+
+Add to your `.env.local` (never commit it):
+
+```env
+COINGECKO_API_KEY=CG-XXXXXXXXXXXXXXXXXXXXXXXX  # Your actual key
+```
+
+### 2. Create the Price Utility (`lib/coingecko.ts`)
+
+Create this file ¡ª it handles everything (simple coins + contract-address tokens on Base & Solana).
+
+```ts
+// lib/coingecko.ts
+const BASE_URL = 'https://pro-api.coingecko.com/api/v3';
+const API_KEY = process.env.COINGECKO_API_KEY!;
+
+const headers = {
+  'x-cg-pro-api-key': API_KEY,
+  'Content-Type': 'application/json',
+};
+
+// Batch major coins (SOL, JitoSOL, etc. by CoinGecko ID)
+export async function getSimplePrices(coinIds: string[]) {
+  const ids = coinIds.join(',');
+  const res = await fetch(
+    `${BASE_URL}/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`,
+    { headers, next: { revalidate: 30 } } // Auto-caches for 30s ¡ª perfect UX
+  );
+  if (!res.ok) throw new Error('CoinGecko simple price failed');
+  return res.json();
+}
+
+// Perfect for any token by contract/mint address (USDC on Base, mSOL on Solana, etc.)
+export async function getTokenPriceByAddress(
+  network: 'base' | 'solana' | 'ethereum',
+  addresses: string | string[]
+) {
+  const addrStr = Array.isArray(addresses) ? addresses.join(',') : addresses;
+  const res = await fetch(
+    `${BASE_URL}/simple/token_price/${network}?contract_addresses=${addrStr}&vs_currencies=usd&include_24hr_change=true`,
+    { headers, next: { revalidate: 30 } }
+  );
+  if (!res.ok) throw new Error('CoinGecko token price failed');
+  return res.json();
+}
+
+// Bonus: On-chain DEX-sourced price (more accurate for low-liquidity tokens)
+export async function getOnChainTokenPrice(network: 'base' | 'solana', address: string) {
+  const res = await fetch(
+    `${BASE_URL}/onchain/simple/networks/${network}/token_price/${address}`,
+    { headers, next: { revalidate: 20 } }
+  );
+  return res.json();
+}
+```
+
+### 3. Common Constants (`lib/constants/tokens.ts`)
+
+```ts
+export const TOKENS = {
+  // Base
+  USDC_BASE: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+
+  // Solana
+  SOL: 'So11111111111111111111111111111111111111112',
+  USDC_SOL: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  JITO_SOL: 'J1toso1uCk3RLmjorhTtr2xNHx8x9s2jJ2v3hL4oq9f', // example
+} as const;
+
+export const COIN_IDS = {
+  SOLANA: 'solana',
+  JITO_STAKED_SOL: 'jito-staked-sol',
+} as const;
+```
+
+### 4. Update Your TVL Functions (Replace Mocked Data)
+
+**Base ERC-4626 Vault:**
+
+```ts
+// lib/onchain/base.ts
+import { getTokenPriceByAddress } from '@/lib/coingecko';
+import { TOKENS } from '@/lib/constants/tokens';
+
+export async function getBaseVaultTVL(vaultAddress: `0x${string}`) {
+  const totalAssets = await publicClient.readContract({ /* your ERC-4626 totalAssets call */ });
+
+  const priceData = await getTokenPriceByAddress('base', TOKENS.USDC_BASE);
+  const usdcPrice = priceData[TOKENS.USDC_BASE.toLowerCase()]?.usd ?? 1;
+
+  const tvlUsd = Number(totalAssets) * usdcPrice / 1_000_000; // USDC 6 decimals
+  return { tvlUsd: Math.round(tvlUsd), totalAssets };
+}
+```
+
+**Solana Anchor Vault:**
+
+```ts
+// lib/onchain/solana.ts
+import { getTokenPriceByAddress } from '@/lib/coingecko';
+import { TOKENS } from '@/lib/constants/tokens';
+
+export async function getSolanaVaultTVL(vaultPda: string, underlyingMint: string) {
+  const balance = await getTokenBalance(...); // your Helius/web3.js call
+
+  const priceData = await getTokenPriceByAddress('solana', underlyingMint);
+  const price = priceData[underlyingMint]?.usd ?? 0;
+
+  const tvlUsd = balance * price;
+  return { tvlUsd: Math.round(tvlUsd) };
+}
+```
+
+### 5. Live Analytics Hook (TanStack Query)
+
+Update `hooks/useOmniYieldAnalytics.ts`:
+
+```ts
+const { data } = useQuery({
+  queryKey: ['omni-analytics'],
+  queryFn: async () => {
+    const [baseTVL, solTVL, prices] = await Promise.all([
+      getBaseVaultTVL(BASE_VAULT),
+      getSolanaVaultTVL(SOL_VAULT, TOKENS.SOL),
+      getSimplePrices([COIN_IDS.SOLANA, COIN_IDS.JITO_STAKED_SOL]),
+    ]);
+
+    return {
+      totalTVL: baseTVL.tvlUsd + solTVL.tvlUsd,
+      baseTVL: baseTVL.tvlUsd,
+      solTVL: solTVL.tvlUsd,
+      solPrice: prices.solana.usd,
+      sol24hChange: prices.solana.usd_24h_change,
+      // ... all your other mocked fields now live
+      lastUpdated: Date.now(),
+    };
+  },
+  refetchInterval: 15000, // feels super live
+});
+```
+
+### 6. Portfolio Polish (What Clients Notice)
+
+- Show: `TVL: $124,837 ? Updated 14s ago` (use `lastUpdated`)
+- Green/red arrow for 24h change from `usd_24h_change`
+- For strategy cards: fetch price + APY from DefiLlama (keep DefiLlama for yields, CoinGecko for prices ¡ª best of both)
+
+**Rate Limits (your key unlocks 100¨C500+ calls/min depending on plan)** ¡ª plenty for a portfolio demo.
+
+This single change makes your entire analytics dashboard feel like a real protocol (Yearn/Kamino level). No more fake numbers.
+

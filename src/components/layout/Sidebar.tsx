@@ -1,0 +1,143 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+    LayoutDashboard,
+    Vault,
+    PieChart,
+    BarChart3,
+    Settings,
+    ChevronRight,
+} from "lucide-react";
+
+const iconMap: Record<string, React.ElementType> = {
+    LayoutDashboard,
+    Vault,
+    PieChart,
+    BarChart3,
+    Settings,
+};
+
+const navItems = [
+    { label: "Dashboard", href: "/", icon: "LayoutDashboard" },
+    { label: "Vaults", href: "/vaults", icon: "Vault" },
+    { label: "Portfolio", href: "/portfolio", icon: "PieChart" },
+    { label: "Analytics", href: "/analytics", icon: "BarChart3" },
+    { label: "Settings", href: "/settings", icon: "Settings" },
+];
+
+export default function Sidebar() {
+    const pathname = usePathname();
+    const [expanded, setExpanded] = useState(false);
+
+    return (
+        <motion.aside
+            className="fixed left-0 top-0 h-screen z-50 flex flex-col"
+            style={{
+                background: "var(--bg-secondary)",
+                borderRight: "1px solid var(--border)",
+            }}
+            animate={{ width: expanded ? 240 : 72 }}
+            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+            onMouseEnter={() => setExpanded(true)}
+            onMouseLeave={() => setExpanded(false)}
+        >
+            {/* Logo */}
+            <div
+                className="flex items-center h-16 px-4 gap-3"
+                style={{ borderBottom: "1px solid var(--border)" }}
+            >
+                <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm shrink-0"
+                    style={{ background: "var(--gradient-primary)", color: "#fff" }}
+                >
+                    OY
+                </div>
+                <AnimatePresence>
+                    {expanded && (
+                        <motion.span
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -8 }}
+                            transition={{ duration: 0.15 }}
+                            className="font-bold text-lg whitespace-nowrap gradient-text"
+                            style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)" }}
+                        >
+                            OmniYield
+                        </motion.span>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            {/* Nav Items */}
+            <nav className="flex-1 flex flex-col gap-1 px-3 py-4">
+                {navItems.map((item) => {
+                    const Icon = iconMap[item.icon];
+                    const isActive = pathname === item.href;
+
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative"
+                            style={{
+                                background: isActive ? "var(--cyan-glow)" : "transparent",
+                                color: isActive ? "var(--cyan)" : "var(--text-secondary)",
+                            }}
+                        >
+                            {isActive && (
+                                <motion.div
+                                    layoutId="sidebar-active"
+                                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full"
+                                    style={{ background: "var(--cyan)" }}
+                                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                                />
+                            )}
+                            <Icon
+                                size={20}
+                                className="shrink-0"
+                                style={{
+                                    color: isActive ? "var(--cyan)" : undefined,
+                                }}
+                            />
+                            <AnimatePresence>
+                                {expanded && (
+                                    <motion.span
+                                        initial={{ opacity: 0, x: -8 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -8 }}
+                                        transition={{ duration: 0.12 }}
+                                        className="text-sm font-medium whitespace-nowrap"
+                                        style={{
+                                            color: isActive
+                                                ? "var(--text-primary)"
+                                                : "var(--text-secondary)",
+                                        }}
+                                    >
+                                        {item.label}
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
+                        </Link>
+                    );
+                })}
+            </nav>
+
+            {/* Expand indicator */}
+            <div
+                className="flex items-center justify-center py-4"
+                style={{ borderTop: "1px solid var(--border)" }}
+            >
+                <motion.div
+                    animate={{ rotate: expanded ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                >
+                    <ChevronRight size={16} style={{ color: "var(--text-muted)" }} />
+                </motion.div>
+            </div>
+        </motion.aside>
+    );
+}

@@ -1,0 +1,15 @@
+﻿deBridge API: https://api.dln.trade/v1.0/
+
+Simple Integration Flow for Cross-Chain Routing/Bridging
+Get a quote → POST https://api.dln.trade/v1.0/chain/estimation (source token/chain → dest token/chain + amount). Returns best route + expected output.
+Create transaction/order → POST https://api.dln.trade/v1.0/chain/transaction (add wallet address + recipient). Returns ready-to-sign tx object.
+User signs & submits on source chain.
+Track via deBridge Explorer or Stats API.
+Full examples, SDKs, and GitHub starters are in the docs. You can do this in just a few lines of code or embed their ready-made Widget.
+
+Official starting points:
+Docs overview: https://docs.debridge.com/
+DLN API integration guide: https://docs.debridge.com/dln-details/integration-guidelines
+API reference / Swagger: https://api.dln.trade/
+Quick widget embed for frontends.
+

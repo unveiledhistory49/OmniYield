@@ -1,0 +1,105 @@
+﻿What OmniYield Actually Is (2026 Version)
+A unified yield aggregator where users deposit once (USDC, SOL, or any major asset) and earn the best risk-adjusted yield across chains — automatically compounded.
+Core Flow:
+Connect wallet → pick chain (Solana or Base).
+Deposit → vault mints shares (ERC-4626 on EVM, tokenized shares on Solana).
+Backend strategies auto-allocate to top protocols (Kamino/Jito on Solana, Aave/Aerodrome on Base).
+Rewards auto-compound (via cranks on Solana, keepers on EVM).
+Withdraw anytime + real-time APY/TVL dashboards.
+Why it stands out:
+True cross-chain feel (even if vaults are chain-native at first — you can add Wormhole/deBridge bridging later for "deposit on Base, yield on Solana").
+AA integration makes deposits feel like Web2.
+Public analytics that prove you understand on-chain data.
+Live, interactive demo that converts viewers into "holy shit, hire this person" moments.
+
+Here’s the exact blueprint to build the absolute best version.
+1. Architecture (Clean & Scalable)
+
+Frontend (Next.js)
+   ├── Chain Selector (Base ↔ Solana)
+   ├── Deposit / Withdraw (AA on EVM)
+   └── Analytics Dashboard (TVL, APY charts, your positions)
+
+Solana Program (Anchor/Rust)
+   └── OmniYieldVault PDA
+         ├── Deposit → strategy allocation
+         ├── Harvest & Compound (crank or clockwork)
+         └── Withdraw (burn shares)
+
+EVM (Base) – Solidity
+   └── ERC-4626 Vault + Strategy contracts
+         ├── Deposit → invest in underlying
+         ├── Compound (keeper-triggered)
+         └── Pimlico AA paymaster for gasless
+
+Shared
+   ├── Pyth oracles (prices across chains)
+   └── Subgraph/Helius + Dune for analytics
+
+2. Tech Stack (2026 Meta)
+Layer
+Tech
+Why It's Best
+Frontend
+Next.js 15 + Tailwind + shadcn/ui + Framer
+Blazing fast, beautiful
+EVM
+Solidity 0.8.28 + OpenZeppelin ERC4626 + viem/wagmi
+Standard + battle-tested
+Solana
+Anchor 0.30+ + Rust + wallet-adapter
+Premium, low competition
+AA
+Pimlico + ZeroDev or Biconomy
+Gasless magic
+Data
+Birdeye + Helius (Solana) + Dune API (EVM)
+Real-time flex
+Bridging (bonus)
+deBridge or Wormhole SDK
+True omni later
+3. Step-by-Step: Build It Like a Pro
+Week 1–2: Smart Contracts / Programs
+Solana Side (The Premium Flex)
+Start with Anchor template.
+Core program:
+initialize_vault
+deposit (mint vault shares)
+withdraw
+harvest (pull rewards from strategies)
+Strategies:
+Simple first: Jito SOL staking or Kamino lending.
+Advanced: Dynamic allocation via Jupiter swaps + Orca CLMM (there are great open-source vault managers on GitHub for this).
+Use Clockwork or custom crank for auto-compounding.
+Tests: 100% coverage with Anchor's TS testing.
+EVM Side (Base)
+Deploy an ERC-4626 vault using OpenZeppelin or Solmate.
+Strategy contract: Deposit into Aave V3 or Aerodrome pools.
+Add compound() function (callable by anyone or your keeper).
+Pimlico integration: Add paymaster so users deposit with zero gas in any token.
+Week 3: Frontend (The Wow Factor)
+Build a dark, cyber-minimal UI that feels like Yearn + Jupiter had a baby.
+Key screens:
+Hero with "Deposit once. Earn everywhere." + live TVL counter.
+Chain tabs (Solana | Base) with beautiful cards.
+Deposit form: Amount → estimated APY → "Deposit Gaslessly" button.
+Portfolio page: Your shares value, accrued yield, historical chart.
+Global analytics: Top vaults, APY leaderboards, TVL over time.
+Use:
+Recharts or Tremor for charts.
+Real-time updates via Helius webhooks (Solana) + viem watches (EVM).
+Week 4: Polish & Launch
+Add referral system (5% of fees to referrer).
+Performance fee: 10–20% of yield (goes to a multisig — your "team" wallet).
+Security:
+Full test suite.
+Slither + MythX report in README.
+Simple timelock on upgrades.
+Deploy:
+Solana: Devnet → mainnet-beta (cheap!).
+EVM: Base (low fees, high activity).
+Frontend: Vercel with custom domain.
+4. Visual Inspiration (Build This Exact Vibe)
+These are the dashboards that make clients stop scrolling: @dashboard_ui_1.png @dashboard_ui_2.png
+
+Solana vault UIs that feel native: @solanavault.png

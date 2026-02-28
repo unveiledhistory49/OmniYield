@@ -1,0 +1,165 @@
+**Here¡¯s the single API route that combines EVERYTHING** into one lightning-fast call:  
+`/api/omni-analytics` ¡ú returns live TVL (Base + Solana), CoinGecko prices, DefiLlama strategy APYs, 24h changes, total TVL, and lastUpdated ¡ª all in one JSON.
+
+No more 5 separate fetches. One `fetch('/api/omni-analytics')` = everything.  
+Server-side only ¡ú your CoinGecko key stays safe.  
+Parallel `Promise.all` + Next.js caching ¡ú refreshes every 15 seconds, zero client-side load.
+
+### 1. Create the Route (Copy-Paste Ready)
+
+**File:** `app/api/omni-analytics/route.ts`
+
+```ts
+import { NextResponse } from 'next/server';
+import { createPublicClient, http, parseAbi } from 'viem';
+import { base } from 'viem/chains';
+import { Connection, PublicKey } from '@solana/web3.js';
+
+// ================== CONFIG ==================
+const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY!;
+const HELIUS_RPC = `https://mainnet.helius-rpc.com/?api-key=${process.env.HELIUS_API_KEY}`; // free key
+
+// YOUR DEPLOYED CONTRACTS / PDAs
+const BASE_VAULT = '0xYourBaseERC4626VaultAddressHere' as const;
+const SOL_VAULT_PDA = new PublicKey('YourSolanaVaultPDAHere'); // e.g. your Anchor vault PDA
+const SOL_UNDERLYING_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // USDC on Solana example
+
+// ================== CLIENTS ==================
+const baseClient = createPublicClient({
+  chain: base,
+  transport: http('https://rpc.ankr.com/base'), // free & fast
+});
+
+const solConnection = new Connection(HELIUS_RPC, 'confirmed');
+
+// CoinGecko headers
+const cgHeaders = {
+  'x-cg-pro-api-key': COINGECKO_API_KEY,
+  'Content-Type': 'application/json',
+};
+
+// ================== HELPERS ==================
+async function getCoinGeckoPrices() {
+  const res = await fetch(
+    'https://pro-api.coingecko.com/api/v3/simple/price?ids=solana,usd-coin,jito-staked-sol&vs_currencies=usd&include_24hr_change=true',
+    { headers: cgHeaders, next: { revalidate: 15 } }
+  );
+  return res.json();
+}
+
+async function getDefiLlamaStrategies() {
+  // Kamino + Aave V3 on Base (free endpoints)
+  const [kamino, aave] = await Promise.all([
+    fetch('https://api.llama.fi/protocol/kamino-finance', { next: { revalidate: 30 } }).then(r => r.json()),
+    fetch('https://api.llama.fi/protocol/aave-v3', { next: { revalidate: 30 } }).then(r => r.json()),
+  ]);
+  return {
+    kaminoApy: kamino.currentApy ?? kamino.apy,
+    aaveApy: aave.currentApy ?? aave.apy,
+  };
+}
+
+async function getBaseTVL() {
+  const totalAssets = await baseClient.readContract({
+    address: BASE_VAULT,
+    abi: parseAbi(['function totalAssets() view returns (uint256)']),
+    functionName: 'totalAssets',
+  });
+  return Number(totalAssets) / 1_000_000; // USDC 6 decimals ¡ú raw amount
+}
+
+async function getSolanaTVL() {
+  const balance = await solConnection.getTokenAccountBalance(SOL_UNDERLYING_MINT); // or your vault PDA token account
+  return balance.value.uiAmount ?? 0;
+}
+
+// ================== MAIN ROUTE ==================
+export async function GET() {
+  try {
+    const [prices, strategies, baseRawTVL, solRawTVL] = await Promise.all([
+      getCoinGeckoPrices(),
+      getDefiLlamaStrategies(),
+      getBaseTVL(),
+      getSolanaTVL(),
+    ]);
+
+    const baseTVL = baseRawTVL * (prices['usd-coin']?.usd ?? 1);
+    const solTVL = solRawTVL * (prices['solana']?.usd ?? 0);
+
+    const totalTVL = baseTVL + solTVL;
+
+    const data = {
+      totalTVL: Math.round(totalTVL),
+      baseTVL: Math.round(baseTVL),
+      solTVL: Math.round(solTVL),
+      prices: {
+        SOL: prices.solana?.usd ?? 0,
+        USDC: prices['usd-coin']?.usd ?? 1,
+        JitoSOL: prices['jito-staked-sol']?.usd ?? 0,
+      },
+      changes24h: {
+        SOL: prices.solana?.usd_24h_change ?? 0,
+      },
+      strategies,
+      lastUpdated: Date.now(),
+    };
+
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=30',
+      },
+    });
+  } catch (error) {
+    console.error('Omni analytics failed:', error);
+    return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
+  }
+}
+
+// Optional: ISR revalidation
+export const revalidate = 15;
+```
+
+### 2. Add Your Env Vars
+
+`.env.local`
+```env
+COINGECKO_API_KEY=CG-XXXXXXXXXXXXXXXXXXXXXXXX
+HELIUS_API_KEY=your_free_helius_key_here   # get in 30s at helius.dev
+```
+
+### 3. Frontend ¨C One Single Hook (Update Your Existing One)
+
+```ts
+// hooks/useOmniYieldAnalytics.ts
+import { useQuery } from '@tanstack/react-query';
+
+export function useOmniYieldAnalytics() {
+  return useQuery({
+    queryKey: ['omni-analytics'],
+    queryFn: async () => {
+      const res = await fetch('/api/omni-analytics');
+      if (!res.ok) throw new Error('Analytics fetch failed');
+      return res.json();
+    },
+    refetchInterval: 15000,        // 15s live refresh
+    staleTime: 10000,
+  });
+}
+```
+
+### 4. Usage Anywhere in Your Dashboard
+
+```tsx
+const { data, isLoading } = useOmniYieldAnalytics();
+
+{data && (
+  <>
+    <div>Total TVL: ${data.totalTVL.toLocaleString()}</div>
+    <div>Base TVL: ${data.baseTVL.toLocaleString()} ? Solana: ${data.solTVL.toLocaleString()}</div>
+    <div>SOL: ${data.prices.SOL} ({data.changes24h.SOL > 0 ? '+' : ''}{data.changes24h.SOL.toFixed(2)}%)</div>
+  </>
+)}
+```
+
+That¡¯s it. One call. All live data. Zero mocked numbers.  
+Your portfolio dashboard now feels exactly like Kamino or Yearn.

@@ -1,0 +1,88 @@
+// app/api/yields/route.ts
+import { NextResponse } from 'next/server';
+
+interface DefiLlamaPool {
+  pool: string;
+  project: string;
+  symbol: string;
+  chain: string;
+  tvlUsd: number;
+  apy: number;
+  apyBase: number | null;
+  apyReward: number | null;
+}
+
+const TARGETS = [
+  { name: 'Aave v3 base usdc', project: 'aave-v3', chain: 'Base',   symbol: 'USDC',  exclude: ['SYRUP'] },
+  { name: 'Aave v3 base eth',  project: 'aave-v3', chain: 'Base',   symbol: 'WETH',  exclude: ['SYRUP'] },
+  { name: 'Aerodrome eth',     project: 'aerodrome', chain: 'Base', symbol: null },
+  { name: 'Kamino SOL',        project: 'kamino-lend', chain: 'Solana', symbol: 'SOL', exclude: ['DSOL'] },
+  { name: 'Kamino usdc',       project: 'kamino-lend', chain: 'Solana', symbol: 'USDC' },
+  { name: 'Marinade SOL',      project: 'marinade', chain: 'Solana', symbol: 'MSOL' },
+];
+
+export const revalidate = 60; // auto-refresh every 60s
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const debug = searchParams.get('debug') === 'true'; // ?debug=true shows alternatives
+
+  try {
+    const res = await fetch('https://yields.llama.fi/pools', {
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) throw new Error(`DefiLlama error: ${res.status}`);
+
+    const { data }: { data: DefiLlamaPool[] } = await res.json();
+
+    const result: Record<string, any> = {};
+
+    for (const target of TARGETS) {
+      let matches = data.filter((p) => {
+        const projectMatch = p.project.toLowerCase().includes(target.project.toLowerCase());
+        const chainMatch = p.chain === target.chain;
+
+        let symbolMatch = true;
+        if (target.symbol) {
+          symbolMatch = p.symbol === target.symbol;
+        }
+
+        const excludeMatch = target.exclude
+          ? !target.exclude.some((ex) => p.symbol.toUpperCase().includes(ex))
+          : true;
+
+        return projectMatch && chainMatch && symbolMatch && excludeMatch;
+      });
+
+      // Aerodrome special case: highest TVL ETH/WETH pool
+      if (target.name === 'Aerodrome eth') {
+        matches = data
+          .filter((p) =>
+            p.chain === 'Base' &&
+            p.project.toLowerCase().includes('aerodrome') &&
+            (p.symbol.includes('ETH') || p.symbol.includes('WETH'))
+          )
+          .sort((a, b) => b.tvlUsd - a.tvlUsd);
+      }
+
+      result[target.name] = {
+        ...matches[0],           // main result
+        alternatives: debug ? matches.slice(0, 3) : undefined, // for debugging
+      };
+    }
+
+    return NextResponse.json({
+      success: true,
+      timestamp: new Date().toISOString(),
+      data: result,
+      note: 'Now using exact symbol matches ? no more SYRUP or DSOL',
+    });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { success: false, error: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}
