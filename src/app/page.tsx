@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Shield, Zap, RefreshCcw, Globe } from "lucide-react";
-import { MOCK_STATS } from "@/lib/mock-data";
+import { useOmniYieldAnalytics } from "@/hooks/useOmniYieldAnalytics";
 import { formatCurrency } from "@/lib/utils";
 import { CrossChainDeposit } from "@/lib/components/CrossChainDeposit";
 
@@ -64,6 +64,16 @@ const features = [
 const protocols = ["Kamino", "Jito", "Marinade", "Aave", "Aerodrome", "Compound"];
 
 export default function HeroPage() {
+  const { data: liveStats } = useOmniYieldAnalytics();
+
+  const stats = {
+    totalTVL: liveStats?.totalTVL || 0,
+    avgAPY: liveStats?.vaults && liveStats.vaults.length > 0 ? liveStats.vaults.reduce((acc, v) => acc + v.apy, 0) / liveStats.vaults.length : 0,
+    totalUsers: 1420,
+    totalYieldDistributed: 120500,
+    vaultCount: liveStats?.vaults?.length || 0,
+  };
+
   return (
     <div style={{ marginLeft: "-32px", marginTop: "-32px", marginRight: "-32px" }}>
       {/* Hero Section */}
@@ -155,7 +165,7 @@ export default function HeroPage() {
         >
           <div className="text-center">
             <div className="text-4xl md:text-5xl font-bold mb-1">
-              <AnimatedCounter target={MOCK_STATS.totalTVL} />
+              <AnimatedCounter target={stats.totalTVL} />
             </div>
             <div className="text-sm" style={{ color: "var(--text-tertiary)" }}>
               Total Value Locked
@@ -173,7 +183,7 @@ export default function HeroPage() {
                 fontFamily: "var(--font-outfit, 'Outfit', sans-serif)",
               }}
             >
-              {MOCK_STATS.avgAPY.toFixed(1)}%
+              {stats.avgAPY.toFixed(1)}%
             </div>
             <div className="text-sm" style={{ color: "var(--text-tertiary)" }}>
               Average APY
@@ -289,10 +299,10 @@ export default function HeroPage() {
       >
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
-            { label: "Total Value Locked", value: formatCurrency(MOCK_STATS.totalTVL) },
-            { label: "Total Users", value: MOCK_STATS.totalUsers.toLocaleString() },
-            { label: "Yield Distributed", value: formatCurrency(MOCK_STATS.totalYieldDistributed) },
-            { label: "Active Vaults", value: MOCK_STATS.vaultCount.toString() },
+            { label: "Total Value Locked", value: formatCurrency(stats.totalTVL) },
+            { label: "Total Users", value: stats.totalUsers.toLocaleString() },
+            { label: "Yield Distributed", value: formatCurrency(stats.totalYieldDistributed) },
+            { label: "Active Vaults", value: stats.vaultCount.toString() },
           ].map((stat) => (
             <div key={stat.label}>
               <div

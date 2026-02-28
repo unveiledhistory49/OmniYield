@@ -22,23 +22,28 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from "recharts";
-import { MOCK_VAULTS } from "@/lib/mock-data";
 import { formatCurrency, formatAPY } from "@/lib/utils";
 import { useWallet } from "@/lib/hooks/useWallet";
 import { useOmniYield } from "@/lib/hooks/useOmniYield";
 import { formatUnits, parseUnits } from "viem";
 import { GaslessDeposit } from "@/lib/components/GaslessDeposit";
+import { useVaults } from "@/lib/hooks/useVaults";
 
 type TimeRange = "7d" | "14d" | "30d";
 
 export default function VaultDetailPage() {
     const params = useParams();
     const vaultId = decodeURIComponent(params.id as string);
-    const vault = MOCK_VAULTS.find((v) => v.id === vaultId);
+    const { vaults: allVaults, isLoading: vaultsLoading } = useVaults();
+
+    const vault = useMemo(() => {
+        return allVaults.find((v) => v.id === vaultId);
+    }, [allVaults, vaultId]);
+
     const { isConnected, connect, address } = useWallet();
 
     // Sepolia / EVM Integration
-    const isSepolia = vault?.chain === "sepolia";
+    const isSepolia = vault?.chain === "sepolia" || vault?.id.includes('base');
     const { data: omniData, actions: omniActions } = useOmniYield();
 
     const [tab, setTab] = useState<"deposit" | "withdraw">("deposit");
@@ -47,16 +52,12 @@ export default function VaultDetailPage() {
     const [statusMsg, setStatusMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
     const chartData = useMemo(() => {
-        if (!vault) return [];
-        const days = timeRange === "7d" ? 7 : timeRange === "14d" ? 14 : 30;
-        return vault.apyHistory.slice(-days);
-    }, [vault, timeRange]);
+        return []; // No historical data yet without backend support
+    }, []);
 
     const tvlChartData = useMemo(() => {
-        if (!vault) return [];
-        const days = timeRange === "7d" ? 7 : timeRange === "14d" ? 14 : 30;
-        return vault.tvlHistory.slice(-days);
-    }, [vault, timeRange]);
+        return [];
+    }, []);
 
     // Clear status message after 5s
     useEffect(() => {
@@ -84,11 +85,11 @@ export default function VaultDetailPage() {
         : "0.00";
 
     // Real Balance Check
-    const userAssetBalance = isSepolia && omniData.assetBalance
+    const userAssetBalance = isSepolia && omniData?.assetBalance
         ? parseFloat(formatUnits(omniData.assetBalance, 18))
-        : 0; // Mock 0 for others
+        : 0;
 
-    const userVaultBalance = isSepolia && omniData.vaultBalance
+    const userVaultBalance = isSepolia && omniData?.vaultBalance
         ? parseFloat(formatUnits(omniData.vaultBalance, 18))
         : 0;
 
@@ -205,9 +206,7 @@ export default function VaultDetailPage() {
                     },
                     {
                         label: "Total TVL",
-                        value: isSepolia && omniData.totalAssets
-                            ? formatCurrency(parseFloat(formatUnits(omniData.totalAssets, 18)))
-                            : formatCurrency(vault.tvl),
+                        value: formatCurrency(vault.tvl),
                         color: "var(--cyan)",
                         icon: DollarSign,
                     },

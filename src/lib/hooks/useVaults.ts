@@ -1,29 +1,38 @@
-"use client";
-
 import { useMemo } from "react";
-import { MOCK_VAULTS } from "@/lib/mock-data";
-import { useChain } from "@/providers/wallet-provider";
+import { useOmniYieldAnalytics } from "@/hooks/useOmniYieldAnalytics";
 import type { Chain } from "@/lib/constants";
 
 export function useVaults(filterChain?: Chain) {
-    const { chain } = useChain();
-    const activeChain = filterChain ?? chain;
+    const { data: liveData, isLoading, error } = useOmniYieldAnalytics();
 
     const vaults = useMemo(() => {
-        if (activeChain === "solana") {
-            return MOCK_VAULTS.filter((v) => v.chain === "solana");
+        if (!liveData?.vaults) return [];
+
+        let processed = liveData.vaults.map((v) => ({
+            id: v.id,
+            name: v.name,
+            protocol: v.project,
+            chain: v.chain.toLowerCase() as Chain,
+            asset: v.symbol,
+            apy: v.apy,
+            tvl: v.tvlUsd,
+            strategy: v.project.toLowerCase().includes('aave') ? 'Overcollateralized Lending' :
+                v.project.toLowerCase().includes('aerodrome') ? 'Concentrated Liquidity' :
+                    v.project.toLowerCase().includes('kamino') ? 'Automated Lending' : 'Liquid Staking',
+            riskLevel: (v.project.toLowerCase().includes('aerodrome') ? 'medium' : 'low') as "low" | "medium" | "high",
+        }));
+
+        if (filterChain && filterChain !== "all") {
+            processed = processed.filter((v) => v.chain === filterChain);
         }
-        if (activeChain === "base") {
-            return MOCK_VAULTS.filter((v) => v.chain === "base");
-        }
-        return MOCK_VAULTS;
-    }, [activeChain]);
+
+        return processed;
+    }, [liveData, filterChain]);
 
     return {
         vaults,
-        allVaults: MOCK_VAULTS,
-        isLoading: false,
-        error: null,
-        chain: activeChain,
+        allVaults: vaults,
+        isLoading,
+        error,
     };
 }

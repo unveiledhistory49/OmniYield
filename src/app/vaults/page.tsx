@@ -12,10 +12,7 @@ import {
     Shield,
     ExternalLink,
 } from "lucide-react";
-import { MOCK_VAULTS } from "@/lib/mock-data";
-import { formatCurrency, formatAPY } from "@/lib/utils";
-import type { Chain } from "@/lib/constants";
-import { useOmniYieldAnalytics } from "@/hooks/useOmniYieldAnalytics";
+import { useVaults } from "@/lib/hooks/useVaults";
 
 type SortKey = "apy" | "tvl" | "name";
 type ViewMode = "table" | "cards";
@@ -27,24 +24,7 @@ export default function VaultsPage() {
     const [sortDesc, setSortDesc] = useState(true);
     const [viewMode, setViewMode] = useState<ViewMode>("table");
 
-    const { data: liveData, isLoading, error } = useOmniYieldAnalytics();
-
-    const activeVaults = useMemo(() => {
-        if (!liveData?.vaults) return [];
-        return liveData.vaults.map((v) => ({
-            id: v.id,
-            name: v.name,
-            protocol: v.project,
-            chain: v.chain.toLowerCase() as Chain,
-            asset: v.symbol,
-            apy: v.apy,
-            tvl: v.tvlUsd,
-            strategy: v.project.includes('aave') ? 'Overcollateralized Lending' :
-                v.project.includes('aero') ? 'Concentrated Liquidity' :
-                    v.project.includes('kamino') ? 'Automated Lending' : 'Liquid Staking',
-            riskLevel: v.project.includes('aero') ? 'Medium' : 'Low',
-        }));
-    }, [liveData]);
+    const { vaults: activeVaults, isLoading, error } = useVaults(chainFilter === "all" ? undefined : chainFilter);
 
     const filteredVaults = useMemo(() => {
         let vaults = [...activeVaults];

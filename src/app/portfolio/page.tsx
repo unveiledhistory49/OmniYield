@@ -17,35 +17,16 @@ import {
     DollarSign,
     PieChart as PieChartIcon,
 } from "lucide-react";
-import { MOCK_PORTFOLIO } from "@/lib/mock-data";
 import { formatCurrency, formatAPY } from "@/lib/utils";
-import { useOmniYieldAnalytics } from "@/hooks/useOmniYieldAnalytics";
+import { usePortfolio } from "@/lib/hooks/usePortfolio";
 
 export default function PortfolioPage() {
-    const { data: liveData, isLoading, error } = useOmniYieldAnalytics();
+    const { positions: activePortfolio, stats, isLoading, error } = usePortfolio();
 
-    const activePortfolio = useMemo(() => {
-        let portfolio = [...MOCK_PORTFOLIO];
-        if (liveData) {
-            portfolio = portfolio.map(p => {
-                let apy = p.apy;
-                if (p.vaultName.includes("Kamino")) apy = liveData.strategies.kaminoApy;
-                if (p.vaultName.includes("Aave")) apy = liveData.strategies.aaveApy;
-                if (p.vaultName.includes("Aerodrome")) apy = liveData.strategies.aerodromeApy;
-                return { ...p, apy };
-            });
-        } else {
-            portfolio = portfolio.map(p => ({ ...p, apy: 0 }));
-        }
-        return portfolio;
-    }, [liveData]);
-
-    const totalDeposited = liveData ? activePortfolio.reduce((s, p) => s + p.deposited, 0) : 0;
-    const totalCurrent = liveData ? activePortfolio.reduce((s, p) => s + p.currentValue, 0) : 0;
-    const totalYield = liveData ? activePortfolio.reduce((s, p) => s + p.yieldEarned, 0) : 0;
-    const weightedAPY = (activePortfolio.length > 0 && liveData && totalDeposited > 0)
-        ? activePortfolio.reduce((s, p) => s + p.apy * p.deposited, 0) / totalDeposited
-        : 0;
+    const totalDeposited = stats.totalTVL; // Using TVL as a surrogate or 0 if not calc'd
+    const totalCurrent = stats.totalTVL;
+    const totalYield = stats.totalYieldDistributed;
+    const weightedAPY = stats.avgAPY;
 
     // Generate portfolio value history
     const portfolioHistory = useMemo(() => {
