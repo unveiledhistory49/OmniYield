@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useVaults } from "@/lib/hooks/useVaults";
 import type { Chain } from "@/lib/constants";
+import { formatCurrency, formatAPY } from "@/lib/utils";
 
 type SortKey = "apy" | "tvl" | "name";
 type ViewMode = "table" | "cards";
