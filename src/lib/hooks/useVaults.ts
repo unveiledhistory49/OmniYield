@@ -22,7 +22,7 @@ export function useVaults(filterChain?: Chain) {
             riskLevel: (v.project.toLowerCase().includes('aerodrome') ? 'medium' : 'low') as "low" | "medium" | "high",
         }));
 
-        if (filterChain && filterChain !== "all") {
+        if (filterChain) {
             processed = processed.filter((v) => v.chain === filterChain);
         }
 
