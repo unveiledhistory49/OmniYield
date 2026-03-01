@@ -13,6 +13,7 @@ import {
     ExternalLink,
 } from "lucide-react";
 import { useVaults } from "@/lib/hooks/useVaults";
+import type { Chain } from "@/lib/constants";
 
 type SortKey = "apy" | "tvl" | "name";
 type ViewMode = "table" | "cards";
