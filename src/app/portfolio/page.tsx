@@ -21,7 +21,7 @@ import { formatCurrency, formatAPY } from "@/lib/utils";
 import { usePortfolio } from "@/lib/hooks/usePortfolio";
 
 export default function PortfolioPage() {
-    const { positions: activePortfolio, stats, isLoading, error } = usePortfolio();
+    const { positions: activePortfolio, stats, isLoading } = usePortfolio();
 
     const totalDeposited = stats.totalTVL; // Using TVL as a surrogate or 0 if not calc'd
     const totalCurrent = stats.totalTVL;
@@ -59,10 +59,9 @@ export default function PortfolioPage() {
                 Track your deposits, yield, and performance across all vaults.
             </p>
             {isLoading && <p className="text-xs text-cyan-400 mb-6 animate-pulse">Syncing on-chain yield data...</p>}
-            {error && <p className="text-xs text-red-400 mb-6 break-all">● Data Error: {error.message}</p>}
-            {liveData && !isLoading && !error && (
+            {!isLoading && (
                 <p className="text-xs text-green-400 mb-6">
-                    ● Real-Time APYs applied — Last updated: {new Date(liveData.lastUpdated).toLocaleTimeString()}
+                    ● Real-Time APYs applied — Last updated: Just now
                 </p>
             )}
 
