@@ -4,10 +4,20 @@ import { useState, useCallback, useMemo } from "react";
 import { useWallet } from "./useWallet";
 import { useOmniYieldAnalytics } from "@/hooks/useOmniYieldAnalytics";
 
+export interface Position {
+    vaultId: string;
+    vaultName: string;
+    chain: string;
+    deposited: number;
+    currentValue: number;
+    yieldEarned: number;
+    apy: number;
+}
+
 export function usePortfolio() {
     const { isConnected } = useWallet();
     const { data: analytics } = useOmniYieldAnalytics();
-    const [positions, setPositions] = useState([]);
+    const [positions, setPositions] = useState<Position[]>([]);
 
     const stats = useMemo(() => {
         if (!isConnected || !analytics) {
