@@ -78,7 +78,7 @@ export default function VaultsPage() {
                         Explore {activeVaults.length} yield-bearing vaults across chains
                         {isLoading && <span className="text-cyan-400 ml-2 animate-pulse">● Syncing...</span>}
                         {error && <span className="text-red-400 ml-2">● Data Error: {error.message}</span>}
-                        {liveData && !isLoading && !error && <span className="text-green-400 ml-2">● Live Rates Active</span>}
+                        {!isLoading && !error && <span className="text-green-400 ml-2">● Live Rates Active</span>}
                     </p>
                 </div>
 
