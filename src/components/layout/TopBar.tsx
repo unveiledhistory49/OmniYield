@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import ChainSelector from "@/components/ui/ChainSelector";
 import { Wallet, Bell, LogOut, ChevronDown } from "lucide-react";
 import type { Chain } from "@/lib/constants";
 import { useWallet } from "@/lib/hooks/useWallet";
 import { useIsMobile } from "@/components/layout/Sidebar";
-import { useChain } from "@/providers/wallet-provider";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface TopBarProps {
@@ -39,6 +38,16 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
             return () => document.removeEventListener("mousedown", handleClickOutside);
         }
     }, [showDropdown]);
+
+    // Tap a chain option → set chain + trigger wallet connect immediately
+    const handleChainConnect = useCallback((selectedChain: Chain) => {
+        onChainChange(selectedChain);
+        setShowDropdown(false);
+        // Small delay to let the chain context update before triggering connect
+        setTimeout(() => {
+            connect();
+        }, 100);
+    }, [onChainChange, connect]);
 
     return (
         <header
@@ -74,125 +83,98 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
 
             {/* Right: Controls */}
             {isMobile ? (
-                /* ─── Mobile: Single Connect button with dropdown ─── */
+                /* ─── Mobile: Single button with 2-step connect flow ─── */
                 <div className="relative" ref={dropdownRef}>
-                    <button
-                        onClick={() => setShowDropdown(!showDropdown)}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer"
-                        style={{
-                            background: isConnected ? "var(--glass)" : "var(--gradient-primary)",
-                            border: isConnected ? "1px solid var(--border)" : "none",
-                            color: "#fff",
-                        }}
-                    >
-                        {isConnected ? (
-                            <>
-                                <div className="w-2 h-2 rounded-full" style={{ background: "var(--green)" }} />
-                                <span className="text-xs">
-                                    {displayAddress?.slice(0, 4)}...{displayAddress?.slice(-4)}
-                                </span>
-                            </>
-                        ) : (
-                            <>
-                                <Wallet size={14} />
-                                {isConnecting ? "..." : "Connect"}
-                            </>
-                        )}
-                        <ChevronDown
-                            size={12}
-                            className="transition-transform duration-200"
-                            style={{ transform: showDropdown ? "rotate(180deg)" : "none" }}
-                        />
-                    </button>
-
-                    {/* Dropdown */}
-                    <AnimatePresence>
-                        {showDropdown && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                                transition={{ duration: 0.15 }}
-                                className="absolute right-0 top-full mt-2 w-48 rounded-xl overflow-hidden"
+                    {isConnected ? (
+                        /* Connected state: show address + disconnect */
+                        <div className="flex items-center gap-1.5">
+                            <div
+                                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium"
                                 style={{
-                                    background: "var(--bg-card)",
+                                    background: "var(--glass)",
                                     border: "1px solid var(--border)",
-                                    boxShadow: "var(--shadow-lg)",
-                                    backdropFilter: "blur(20px)",
+                                    color: "var(--text-primary)",
                                 }}
                             >
-                                {/* Chain selection */}
-                                <div
-                                    className="px-3 py-2 text-[10px] font-semibold uppercase tracking-wider"
-                                    style={{ color: "var(--text-muted)", borderBottom: "1px solid var(--border)" }}
-                                >
-                                    Select Network
-                                </div>
-                                <button
-                                    onClick={() => { onChainChange("solana"); setShowDropdown(false); }}
-                                    className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors cursor-pointer"
-                                    style={{
-                                        background: chain === "solana" ? "var(--solana-glow)" : "transparent",
-                                        color: chain === "solana" ? "var(--text-primary)" : "var(--text-secondary)",
-                                        borderBottom: "1px solid var(--border)",
-                                    }}
-                                >
-                                    <span className="text-base">◎</span>
-                                    Connect Solana
-                                    {chain === "solana" && (
-                                        <span className="ml-auto w-1.5 h-1.5 rounded-full" style={{ background: "var(--green)" }} />
-                                    )}
-                                </button>
-                                <button
-                                    onClick={() => { onChainChange("base"); setShowDropdown(false); }}
-                                    className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors cursor-pointer"
-                                    style={{
-                                        background: chain === "base" ? "var(--base-glow)" : "transparent",
-                                        color: chain === "base" ? "var(--text-primary)" : "var(--text-secondary)",
-                                    }}
-                                >
-                                    <span className="text-base">Ⓑ</span>
-                                    Connect Base
-                                    {chain === "base" && (
-                                        <span className="ml-auto w-1.5 h-1.5 rounded-full" style={{ background: "var(--green)" }} />
-                                    )}
-                                </button>
+                                <div className="w-2 h-2 rounded-full" style={{ background: "var(--green)" }} />
+                                {displayAddress?.slice(0, 4)}...{displayAddress?.slice(-4)}
+                            </div>
+                            <button
+                                onClick={disconnect}
+                                className="p-2 rounded-lg cursor-pointer"
+                                style={{
+                                    background: "var(--glass)",
+                                    border: "1px solid var(--border)",
+                                    color: "var(--text-secondary)",
+                                }}
+                            >
+                                <LogOut size={14} />
+                            </button>
+                        </div>
+                    ) : (
+                        /* Not connected: Connect button + dropdown */
+                        <>
+                            <button
+                                onClick={() => setShowDropdown(!showDropdown)}
+                                className="flex items-center gap-1.5 px-4 py-2 rounded-lg font-medium text-sm cursor-pointer"
+                                style={{
+                                    background: "var(--gradient-primary)",
+                                    color: "#fff",
+                                }}
+                            >
+                                <Wallet size={14} />
+                                Connect
+                                <ChevronDown
+                                    size={12}
+                                    className="transition-transform duration-200"
+                                    style={{ transform: showDropdown ? "rotate(180deg)" : "none" }}
+                                />
+                            </button>
 
-                                {/* Wallet action */}
-                                {isConnected && (
-                                    <>
-                                        <div style={{ borderTop: "1px solid var(--border)" }} />
+                            {/* Dropdown: just two options */}
+                            <AnimatePresence>
+                                {showDropdown && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                                        transition={{ duration: 0.15 }}
+                                        className="absolute right-0 top-full mt-2 w-48 rounded-xl overflow-hidden"
+                                        style={{
+                                            background: "var(--bg-card)",
+                                            border: "1px solid var(--border)",
+                                            boxShadow: "var(--shadow-lg)",
+                                        }}
+                                    >
                                         <button
-                                            onClick={() => { disconnect(); setShowDropdown(false); }}
-                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors cursor-pointer"
-                                            style={{ color: "var(--red)" }}
+                                            onClick={() => handleChainConnect("solana")}
+                                            className="w-full flex items-center gap-3 px-4 py-3.5 text-sm transition-colors cursor-pointer hover:opacity-80"
+                                            style={{
+                                                color: "var(--text-secondary)",
+                                                borderBottom: "1px solid var(--border)",
+                                            }}
                                         >
-                                            <LogOut size={14} />
-                                            Disconnect Wallet
+                                            <span className="text-base">◎</span>
+                                            Connect Solana
                                         </button>
-                                    </>
-                                )}
-
-                                {!isConnected && (
-                                    <>
-                                        <div style={{ borderTop: "1px solid var(--border)" }} />
                                         <button
-                                            onClick={() => { connect(); setShowDropdown(false); }}
-                                            disabled={isConnecting}
-                                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors cursor-pointer"
-                                            style={{ color: "var(--cyan)" }}
+                                            onClick={() => handleChainConnect("base")}
+                                            className="w-full flex items-center gap-3 px-4 py-3.5 text-sm transition-colors cursor-pointer hover:opacity-80"
+                                            style={{
+                                                color: "var(--text-secondary)",
+                                            }}
                                         >
-                                            <Wallet size={14} />
-                                            Connect Wallet
+                                            <span className="text-base">Ⓑ</span>
+                                            Connect Base
                                         </button>
-                                    </>
+                                    </motion.div>
                                 )}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                            </AnimatePresence>
+                        </>
+                    )}
                 </div>
             ) : (
-                /* ─── Desktop: Full controls ─── */
+                /* ─── Desktop: Full controls (unchanged) ─── */
                 <div className="flex items-center gap-4">
                     <ChainSelector value={chain} onChange={onChainChange} />
 
