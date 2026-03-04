@@ -26,32 +26,43 @@ import type {
 export interface OmniYieldVaultInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "FEE_DENOMINATOR"
+      | "MAX_FEE_BPS"
       | "allowance"
       | "approve"
       | "asset"
       | "balanceOf"
+      | "compound"
       | "convertToAssets"
       | "convertToShares"
       | "decimals"
       | "deposit"
+      | "feeRecipient"
+      | "harvest"
+      | "lastHarvestTimestamp"
       | "maxDeposit"
       | "maxMint"
       | "maxRedeem"
       | "maxWithdraw"
       | "mint"
       | "name"
+      | "netApy"
       | "owner"
-      | "pendingStrategy"
+      | "performanceFeeBps"
       | "previewDeposit"
       | "previewMint"
       | "previewRedeem"
       | "previewWithdraw"
       | "redeem"
       | "renounceOwnership"
+      | "setFeeRecipient"
+      | "setPerformanceFeeBps"
       | "setStrategy"
       | "strategy"
       | "symbol"
       | "totalAssets"
+      | "totalFeesCollected"
+      | "totalHarvestedProfit"
       | "totalSupply"
       | "transfer"
       | "transferFrom"
@@ -63,12 +74,24 @@ export interface OmniYieldVaultInterface extends Interface {
     nameOrSignatureOrTopic:
       | "Approval"
       | "Deposit"
+      | "FeeCollected"
+      | "FeeRecipientUpdated"
+      | "Harvested"
       | "OwnershipTransferred"
+      | "PerformanceFeeUpdated"
       | "StrategyUpdated"
       | "Transfer"
       | "Withdraw"
   ): EventFragment;
 
+  encodeFunctionData(
+    functionFragment: "FEE_DENOMINATOR",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MAX_FEE_BPS",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [AddressLike, AddressLike]
@@ -82,6 +105,7 @@ export interface OmniYieldVaultInterface extends Interface {
     functionFragment: "balanceOf",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "compound", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "convertToAssets",
     values: [BigNumberish]
@@ -94,6 +118,15 @@ export interface OmniYieldVaultInterface extends Interface {
   encodeFunctionData(
     functionFragment: "deposit",
     values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "feeRecipient",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "harvest", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "lastHarvestTimestamp",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "maxDeposit",
@@ -116,9 +149,13 @@ export interface OmniYieldVaultInterface extends Interface {
     values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "netApy",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "pendingStrategy",
+    functionFragment: "performanceFeeBps",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -146,6 +183,14 @@ export interface OmniYieldVaultInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setFeeRecipient",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPerformanceFeeBps",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setStrategy",
     values: [AddressLike]
   ): string;
@@ -153,6 +198,14 @@ export interface OmniYieldVaultInterface extends Interface {
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalAssets",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalFeesCollected",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalHarvestedProfit",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -176,10 +229,19 @@ export interface OmniYieldVaultInterface extends Interface {
     values: [BigNumberish, AddressLike, AddressLike]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "FEE_DENOMINATOR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MAX_FEE_BPS",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "compound", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "convertToAssets",
     data: BytesLike
@@ -190,6 +252,15 @@ export interface OmniYieldVaultInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "feeRecipient",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "lastHarvestTimestamp",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
@@ -199,9 +270,10 @@ export interface OmniYieldVaultInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "netApy", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "pendingStrategy",
+    functionFragment: "performanceFeeBps",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -226,6 +298,14 @@ export interface OmniYieldVaultInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setFeeRecipient",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPerformanceFeeBps",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setStrategy",
     data: BytesLike
   ): Result;
@@ -233,6 +313,14 @@ export interface OmniYieldVaultInterface extends Interface {
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalAssets",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalFeesCollected",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalHarvestedProfit",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -294,12 +382,72 @@ export namespace DepositEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace FeeCollectedEvent {
+  export type InputTuple = [recipient: AddressLike, amount: BigNumberish];
+  export type OutputTuple = [recipient: string, amount: bigint];
+  export interface OutputObject {
+    recipient: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace FeeRecipientUpdatedEvent {
+  export type InputTuple = [
+    oldRecipient: AddressLike,
+    newRecipient: AddressLike
+  ];
+  export type OutputTuple = [oldRecipient: string, newRecipient: string];
+  export interface OutputObject {
+    oldRecipient: string;
+    newRecipient: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace HarvestedEvent {
+  export type InputTuple = [
+    profit: BigNumberish,
+    fee: BigNumberish,
+    reinvested: BigNumberish
+  ];
+  export type OutputTuple = [profit: bigint, fee: bigint, reinvested: bigint];
+  export interface OutputObject {
+    profit: bigint;
+    fee: bigint;
+    reinvested: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace OwnershipTransferredEvent {
   export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
   export type OutputTuple = [previousOwner: string, newOwner: string];
   export interface OutputObject {
     previousOwner: string;
     newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace PerformanceFeeUpdatedEvent {
+  export type InputTuple = [oldFeeBps: BigNumberish, newFeeBps: BigNumberish];
+  export type OutputTuple = [oldFeeBps: bigint, newFeeBps: bigint];
+  export interface OutputObject {
+    oldFeeBps: bigint;
+    newFeeBps: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -409,6 +557,10 @@ export interface OmniYieldVault extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  FEE_DENOMINATOR: TypedContractMethod<[], [bigint], "view">;
+
+  MAX_FEE_BPS: TypedContractMethod<[], [bigint], "view">;
+
   allowance: TypedContractMethod<
     [owner: AddressLike, spender: AddressLike],
     [bigint],
@@ -424,6 +576,8 @@ export interface OmniYieldVault extends BaseContract {
   asset: TypedContractMethod<[], [string], "view">;
 
   balanceOf: TypedContractMethod<[account: AddressLike], [bigint], "view">;
+
+  compound: TypedContractMethod<[], [bigint], "nonpayable">;
 
   convertToAssets: TypedContractMethod<
     [shares: BigNumberish],
@@ -445,6 +599,12 @@ export interface OmniYieldVault extends BaseContract {
     "nonpayable"
   >;
 
+  feeRecipient: TypedContractMethod<[], [string], "view">;
+
+  harvest: TypedContractMethod<[], [bigint], "nonpayable">;
+
+  lastHarvestTimestamp: TypedContractMethod<[], [bigint], "view">;
+
   maxDeposit: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
   maxMint: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
@@ -461,9 +621,11 @@ export interface OmniYieldVault extends BaseContract {
 
   name: TypedContractMethod<[], [string], "view">;
 
+  netApy: TypedContractMethod<[grossApyBps: BigNumberish], [bigint], "view">;
+
   owner: TypedContractMethod<[], [string], "view">;
 
-  pendingStrategy: TypedContractMethod<[], [string], "view">;
+  performanceFeeBps: TypedContractMethod<[], [bigint], "view">;
 
   previewDeposit: TypedContractMethod<[assets: BigNumberish], [bigint], "view">;
 
@@ -485,6 +647,18 @@ export interface OmniYieldVault extends BaseContract {
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
+  setFeeRecipient: TypedContractMethod<
+    [newRecipient: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setPerformanceFeeBps: TypedContractMethod<
+    [newFeeBps: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   setStrategy: TypedContractMethod<
     [newStrategy: AddressLike],
     [void],
@@ -496,6 +670,10 @@ export interface OmniYieldVault extends BaseContract {
   symbol: TypedContractMethod<[], [string], "view">;
 
   totalAssets: TypedContractMethod<[], [bigint], "view">;
+
+  totalFeesCollected: TypedContractMethod<[], [bigint], "view">;
+
+  totalHarvestedProfit: TypedContractMethod<[], [bigint], "view">;
 
   totalSupply: TypedContractMethod<[], [bigint], "view">;
 
@@ -528,6 +706,12 @@ export interface OmniYieldVault extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "FEE_DENOMINATOR"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "MAX_FEE_BPS"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "allowance"
   ): TypedContractMethod<
     [owner: AddressLike, spender: AddressLike],
@@ -548,6 +732,9 @@ export interface OmniYieldVault extends BaseContract {
     nameOrSignature: "balanceOf"
   ): TypedContractMethod<[account: AddressLike], [bigint], "view">;
   getFunction(
+    nameOrSignature: "compound"
+  ): TypedContractMethod<[], [bigint], "nonpayable">;
+  getFunction(
     nameOrSignature: "convertToAssets"
   ): TypedContractMethod<[shares: BigNumberish], [bigint], "view">;
   getFunction(
@@ -563,6 +750,15 @@ export interface OmniYieldVault extends BaseContract {
     [bigint],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "feeRecipient"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "harvest"
+  ): TypedContractMethod<[], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "lastHarvestTimestamp"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "maxDeposit"
   ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
@@ -586,11 +782,14 @@ export interface OmniYieldVault extends BaseContract {
     nameOrSignature: "name"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "netApy"
+  ): TypedContractMethod<[grossApyBps: BigNumberish], [bigint], "view">;
+  getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "pendingStrategy"
-  ): TypedContractMethod<[], [string], "view">;
+    nameOrSignature: "performanceFeeBps"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "previewDeposit"
   ): TypedContractMethod<[assets: BigNumberish], [bigint], "view">;
@@ -614,6 +813,12 @@ export interface OmniYieldVault extends BaseContract {
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setFeeRecipient"
+  ): TypedContractMethod<[newRecipient: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setPerformanceFeeBps"
+  ): TypedContractMethod<[newFeeBps: BigNumberish], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setStrategy"
   ): TypedContractMethod<[newStrategy: AddressLike], [void], "nonpayable">;
   getFunction(
@@ -624,6 +829,12 @@ export interface OmniYieldVault extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "totalAssets"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "totalFeesCollected"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "totalHarvestedProfit"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "totalSupply"
@@ -668,11 +879,39 @@ export interface OmniYieldVault extends BaseContract {
     DepositEvent.OutputObject
   >;
   getEvent(
+    key: "FeeCollected"
+  ): TypedContractEvent<
+    FeeCollectedEvent.InputTuple,
+    FeeCollectedEvent.OutputTuple,
+    FeeCollectedEvent.OutputObject
+  >;
+  getEvent(
+    key: "FeeRecipientUpdated"
+  ): TypedContractEvent<
+    FeeRecipientUpdatedEvent.InputTuple,
+    FeeRecipientUpdatedEvent.OutputTuple,
+    FeeRecipientUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Harvested"
+  ): TypedContractEvent<
+    HarvestedEvent.InputTuple,
+    HarvestedEvent.OutputTuple,
+    HarvestedEvent.OutputObject
+  >;
+  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
     OwnershipTransferredEvent.OutputTuple,
     OwnershipTransferredEvent.OutputObject
+  >;
+  getEvent(
+    key: "PerformanceFeeUpdated"
+  ): TypedContractEvent<
+    PerformanceFeeUpdatedEvent.InputTuple,
+    PerformanceFeeUpdatedEvent.OutputTuple,
+    PerformanceFeeUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "StrategyUpdated"
@@ -719,6 +958,39 @@ export interface OmniYieldVault extends BaseContract {
       DepositEvent.OutputObject
     >;
 
+    "FeeCollected(address,uint256)": TypedContractEvent<
+      FeeCollectedEvent.InputTuple,
+      FeeCollectedEvent.OutputTuple,
+      FeeCollectedEvent.OutputObject
+    >;
+    FeeCollected: TypedContractEvent<
+      FeeCollectedEvent.InputTuple,
+      FeeCollectedEvent.OutputTuple,
+      FeeCollectedEvent.OutputObject
+    >;
+
+    "FeeRecipientUpdated(address,address)": TypedContractEvent<
+      FeeRecipientUpdatedEvent.InputTuple,
+      FeeRecipientUpdatedEvent.OutputTuple,
+      FeeRecipientUpdatedEvent.OutputObject
+    >;
+    FeeRecipientUpdated: TypedContractEvent<
+      FeeRecipientUpdatedEvent.InputTuple,
+      FeeRecipientUpdatedEvent.OutputTuple,
+      FeeRecipientUpdatedEvent.OutputObject
+    >;
+
+    "Harvested(uint256,uint256,uint256)": TypedContractEvent<
+      HarvestedEvent.InputTuple,
+      HarvestedEvent.OutputTuple,
+      HarvestedEvent.OutputObject
+    >;
+    Harvested: TypedContractEvent<
+      HarvestedEvent.InputTuple,
+      HarvestedEvent.OutputTuple,
+      HarvestedEvent.OutputObject
+    >;
+
     "OwnershipTransferred(address,address)": TypedContractEvent<
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,
@@ -728,6 +1000,17 @@ export interface OmniYieldVault extends BaseContract {
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,
       OwnershipTransferredEvent.OutputObject
+    >;
+
+    "PerformanceFeeUpdated(uint256,uint256)": TypedContractEvent<
+      PerformanceFeeUpdatedEvent.InputTuple,
+      PerformanceFeeUpdatedEvent.OutputTuple,
+      PerformanceFeeUpdatedEvent.OutputObject
+    >;
+    PerformanceFeeUpdated: TypedContractEvent<
+      PerformanceFeeUpdatedEvent.InputTuple,
+      PerformanceFeeUpdatedEvent.OutputTuple,
+      PerformanceFeeUpdatedEvent.OutputObject
     >;
 
     "StrategyUpdated(address,address)": TypedContractEvent<

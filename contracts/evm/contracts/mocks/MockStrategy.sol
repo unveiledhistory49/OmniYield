@@ -9,26 +9,53 @@ contract MockStrategy is IStrategy {
     using SafeERC20 for IERC20;
 
     IERC20 public immutable _asset;
-    uint256 public simulatedYield;
+    uint256 public invested; // Track principal invested
 
     constructor(IERC20 asset_) {
         _asset = asset_;
     }
 
     function invest(uint256 amount) external override {
-        // Vault has already transferred assets to itself and approved the strategy.
-        // The strategy pulls the funds from the vault.
         _asset.safeTransferFrom(msg.sender, address(this), amount);
+        invested += amount;
     }
 
     function divest(uint256 amount) external override returns (uint256) {
-        // Transfer assets back to the caller (the Vault)
-        // If amount is greater than our balance, just transfer what we have.
         uint256 balance = _asset.balanceOf(address(this));
         uint256 toTransfer = amount > balance ? balance : amount;
         
         _asset.safeTransfer(msg.sender, toTransfer);
+        
+        // Reduce invested tracking
+        if (toTransfer >= invested) {
+            invested = 0;
+        } else {
+            invested -= toTransfer;
+        }
+        
         return toTransfer;
+    }
+
+    /**
+     * @dev Harvests profit (balance above invested principal).
+     * Sends profit to msg.sender (the vault).
+     */
+    function harvest() external override returns (uint256 profit) {
+        uint256 balance = _asset.balanceOf(address(this));
+        if (balance > invested) {
+            profit = balance - invested;
+            _asset.safeTransfer(msg.sender, profit);
+        }
+    }
+
+    /**
+     * @dev Simulate yield by directly minting tokens to this strategy.
+     * In tests, call mockUSDC.mint(strategyAddress, yieldAmount) to add yield.
+     * This function is a no-op but exists for explicitness.
+     */
+    function simulateYield(uint256 /*amount*/) external pure {
+        // Yield is simulated by directly minting tokens to the strategy address
+        // via MockERC20.mint(address(strategy), amount)
     }
 
     function totalAssets() external view override returns (uint256) {

@@ -31,15 +31,11 @@ contract AerodromeStrategy is IStrategy {
     }
 
     function invest(uint256 amount) external override {
-        // Pull underlying from vault
         _asset.safeTransferFrom(msg.sender, address(this), amount);
-        
-        // Mocking: We just hold the asset and track a simulated LP mint
         _mockLpBalance += amount;
     }
 
     function divest(uint256 amount) external override returns (uint256) {
-        // Mocking: We just send the asset back
         require(_mockLpBalance >= amount, "Not enough LP mock balance");
         _mockLpBalance -= amount;
         
@@ -47,8 +43,18 @@ contract AerodromeStrategy is IStrategy {
         return amount;
     }
 
+    /**
+     * @dev Harvests accrued yield. Profit = actual balance - tracked LP balance.
+     */
+    function harvest() external override returns (uint256 profit) {
+        uint256 balance = _asset.balanceOf(address(this));
+        if (balance > _mockLpBalance) {
+            profit = balance - _mockLpBalance;
+            _asset.safeTransfer(msg.sender, profit);
+        }
+    }
+
     function totalAssets() external view override returns (uint256) {
-        // Return simulated value of LP position in underlying terms
         return _mockLpBalance;
     }
 

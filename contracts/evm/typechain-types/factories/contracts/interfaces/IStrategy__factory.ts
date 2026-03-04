@@ -42,6 +42,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "harvest",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "profit",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",

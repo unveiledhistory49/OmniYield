@@ -22,7 +22,7 @@ import type {
 
 export interface IStrategyInterface extends Interface {
   getFunction(
-    nameOrSignature: "asset" | "divest" | "invest" | "totalAssets"
+    nameOrSignature: "asset" | "divest" | "harvest" | "invest" | "totalAssets"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "asset", values?: undefined): string;
@@ -30,6 +30,7 @@ export interface IStrategyInterface extends Interface {
     functionFragment: "divest",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "harvest", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "invest",
     values: [BigNumberish]
@@ -41,6 +42,7 @@ export interface IStrategyInterface extends Interface {
 
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "divest", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "invest", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalAssets",
@@ -95,6 +97,8 @@ export interface IStrategy extends BaseContract {
 
   divest: TypedContractMethod<[amount: BigNumberish], [bigint], "nonpayable">;
 
+  harvest: TypedContractMethod<[], [bigint], "nonpayable">;
+
   invest: TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
 
   totalAssets: TypedContractMethod<[], [bigint], "view">;
@@ -109,6 +113,9 @@ export interface IStrategy extends BaseContract {
   getFunction(
     nameOrSignature: "divest"
   ): TypedContractMethod<[amount: BigNumberish], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "harvest"
+  ): TypedContractMethod<[], [bigint], "nonpayable">;
   getFunction(
     nameOrSignature: "invest"
   ): TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;

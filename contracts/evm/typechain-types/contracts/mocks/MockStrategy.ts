@@ -26,8 +26,10 @@ export interface MockStrategyInterface extends Interface {
       | "_asset"
       | "asset"
       | "divest"
+      | "harvest"
       | "invest"
-      | "simulatedYield"
+      | "invested"
+      | "simulateYield"
       | "totalAssets"
   ): FunctionFragment;
 
@@ -37,13 +39,15 @@ export interface MockStrategyInterface extends Interface {
     functionFragment: "divest",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "harvest", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "invest",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "invested", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "simulatedYield",
-    values?: undefined
+    functionFragment: "simulateYield",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "totalAssets",
@@ -53,9 +57,11 @@ export interface MockStrategyInterface extends Interface {
   decodeFunctionResult(functionFragment: "_asset", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "divest", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "invest", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "invested", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "simulatedYield",
+    functionFragment: "simulateYield",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -113,9 +119,13 @@ export interface MockStrategy extends BaseContract {
 
   divest: TypedContractMethod<[amount: BigNumberish], [bigint], "nonpayable">;
 
+  harvest: TypedContractMethod<[], [bigint], "nonpayable">;
+
   invest: TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
 
-  simulatedYield: TypedContractMethod<[], [bigint], "view">;
+  invested: TypedContractMethod<[], [bigint], "view">;
+
+  simulateYield: TypedContractMethod<[arg0: BigNumberish], [void], "view">;
 
   totalAssets: TypedContractMethod<[], [bigint], "view">;
 
@@ -133,11 +143,17 @@ export interface MockStrategy extends BaseContract {
     nameOrSignature: "divest"
   ): TypedContractMethod<[amount: BigNumberish], [bigint], "nonpayable">;
   getFunction(
+    nameOrSignature: "harvest"
+  ): TypedContractMethod<[], [bigint], "nonpayable">;
+  getFunction(
     nameOrSignature: "invest"
   ): TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "simulatedYield"
+    nameOrSignature: "invested"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "simulateYield"
+  ): TypedContractMethod<[arg0: BigNumberish], [void], "view">;
   getFunction(
     nameOrSignature: "totalAssets"
   ): TypedContractMethod<[], [bigint], "view">;

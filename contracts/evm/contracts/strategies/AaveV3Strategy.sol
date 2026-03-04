@@ -12,11 +12,13 @@ contract AaveV3Strategy is IStrategy {
     IERC20 public immutable _asset;
     IPool public immutable pool;
     IERC20 public immutable aToken;
+    uint256 public invested; // Track principal invested
 
     constructor(IERC20 asset_, IPool pool_, IERC20 aToken_) {
         _asset = asset_;
         pool = pool_;
         aToken = aToken_;
+        invested = 0;
         
         // Approve the Aave pool to spend our underlying asset infinitely
         _asset.forceApprove(address(pool_), type(uint256).max);
@@ -25,6 +27,7 @@ contract AaveV3Strategy is IStrategy {
     function invest(uint256 amount) external override {
         // 1. Pull assets from the Vault into this Strategy
         _asset.safeTransferFrom(msg.sender, address(this), amount);
+        invested += amount;
         
         // 2. Supply those assets to Aave
         pool.supply(address(_asset), amount, address(this), 0);
@@ -32,13 +35,33 @@ contract AaveV3Strategy is IStrategy {
 
     function divest(uint256 amount) external override returns (uint256) {
         // 1. Withdraw from Aave directly to the Vault (msg.sender)
-        // Aave's `withdraw` returns the actual amount withdrawn which might be slightly bounded by liquidity
         uint256 withdrawn = pool.withdraw(address(_asset), amount, msg.sender);
+        
+        // Reduce invested tracking
+        if (withdrawn >= invested) {
+            invested = 0;
+        } else {
+            invested -= withdrawn;
+        }
+        
         return withdrawn;
     }
 
+    /**
+     * @dev Harvests accrued Aave yield.
+     * Calculates profit as (aToken balance - invested principal),
+     * withdraws profit from Aave, and sends to msg.sender (vault).
+     */
+    function harvest() external override returns (uint256 profit) {
+        uint256 currentBalance = aToken.balanceOf(address(this));
+        if (currentBalance > invested) {
+            profit = currentBalance - invested;
+            // Withdraw only the profit from Aave, send to vault (msg.sender)
+            pool.withdraw(address(_asset), profit, msg.sender);
+        }
+    }
+
     function totalAssets() external view override returns (uint256) {
-        // The total value of the strategy is our balance of aTokens
         return aToken.balanceOf(address(this));
     }
 

@@ -22,7 +22,13 @@ import type {
 
 export interface AerodromeStrategyInterface extends Interface {
   getFunction(
-    nameOrSignature: "_asset" | "asset" | "divest" | "invest" | "totalAssets"
+    nameOrSignature:
+      | "_asset"
+      | "asset"
+      | "divest"
+      | "harvest"
+      | "invest"
+      | "totalAssets"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "_asset", values?: undefined): string;
@@ -31,6 +37,7 @@ export interface AerodromeStrategyInterface extends Interface {
     functionFragment: "divest",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "harvest", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "invest",
     values: [BigNumberish]
@@ -43,6 +50,7 @@ export interface AerodromeStrategyInterface extends Interface {
   decodeFunctionResult(functionFragment: "_asset", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "divest", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "invest", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalAssets",
@@ -99,6 +107,8 @@ export interface AerodromeStrategy extends BaseContract {
 
   divest: TypedContractMethod<[amount: BigNumberish], [bigint], "nonpayable">;
 
+  harvest: TypedContractMethod<[], [bigint], "nonpayable">;
+
   invest: TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
 
   totalAssets: TypedContractMethod<[], [bigint], "view">;
@@ -116,6 +126,9 @@ export interface AerodromeStrategy extends BaseContract {
   getFunction(
     nameOrSignature: "divest"
   ): TypedContractMethod<[amount: BigNumberish], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "harvest"
+  ): TypedContractMethod<[], [bigint], "nonpayable">;
   getFunction(
     nameOrSignature: "invest"
   ): TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;

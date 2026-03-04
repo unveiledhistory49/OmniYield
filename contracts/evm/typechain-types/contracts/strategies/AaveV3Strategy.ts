@@ -27,7 +27,9 @@ export interface AaveV3StrategyInterface extends Interface {
       | "aToken"
       | "asset"
       | "divest"
+      | "harvest"
       | "invest"
+      | "invested"
       | "pool"
       | "totalAssets"
   ): FunctionFragment;
@@ -39,10 +41,12 @@ export interface AaveV3StrategyInterface extends Interface {
     functionFragment: "divest",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "harvest", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "invest",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "invested", values?: undefined): string;
   encodeFunctionData(functionFragment: "pool", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalAssets",
@@ -53,7 +57,9 @@ export interface AaveV3StrategyInterface extends Interface {
   decodeFunctionResult(functionFragment: "aToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "divest", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "invest", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "invested", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pool", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalAssets",
@@ -112,7 +118,11 @@ export interface AaveV3Strategy extends BaseContract {
 
   divest: TypedContractMethod<[amount: BigNumberish], [bigint], "nonpayable">;
 
+  harvest: TypedContractMethod<[], [bigint], "nonpayable">;
+
   invest: TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
+
+  invested: TypedContractMethod<[], [bigint], "view">;
 
   pool: TypedContractMethod<[], [string], "view">;
 
@@ -135,8 +145,14 @@ export interface AaveV3Strategy extends BaseContract {
     nameOrSignature: "divest"
   ): TypedContractMethod<[amount: BigNumberish], [bigint], "nonpayable">;
   getFunction(
+    nameOrSignature: "harvest"
+  ): TypedContractMethod<[], [bigint], "nonpayable">;
+  getFunction(
     nameOrSignature: "invest"
   ): TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "invested"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "pool"
   ): TypedContractMethod<[], [string], "view">;

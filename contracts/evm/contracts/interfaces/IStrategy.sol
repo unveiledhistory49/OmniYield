@@ -22,6 +22,13 @@ interface IStrategy {
     function divest(uint256 amount) external returns (uint256);
 
     /**
+     * @dev Harvests accrued yield from the underlying protocol.
+     * Withdraws only the profit (yield above principal) and sends it to the caller (vault).
+     * @return profit The amount of profit harvested.
+     */
+    function harvest() external returns (uint256 profit);
+
+    /**
      * @dev Returns the total amount of underlying assets currently managed by this strategy.
      */
     function totalAssets() external view returns (uint256);

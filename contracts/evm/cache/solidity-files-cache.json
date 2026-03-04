@@ -38,8 +38,8 @@
       ]
     },
     "C:\\Users\\USER\\Desktop\\Projects\\OmniYield\\contracts\\evm\\contracts\\OmniYieldVault.sol": {
-      "lastModificationDate": 1771543620662,
-      "contentHash": "2c8e9e42f0859b716ac084f29507c537",
+      "lastModificationDate": 1772589809088,
+      "contentHash": "9279796ea8cabf85ce46d3a9a50261e7",
       "sourceName": "contracts/OmniYieldVault.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -68,6 +68,7 @@
       "imports": [
         "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol",
         "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
         "@openzeppelin/contracts/access/Ownable.sol",
         "./interfaces/IStrategy.sol"
       ],
@@ -762,8 +763,8 @@
       ]
     },
     "C:\\Users\\USER\\Desktop\\Projects\\OmniYield\\contracts\\evm\\contracts\\strategies\\AaveV3Strategy.sol": {
-      "lastModificationDate": 1771544194662,
-      "contentHash": "cfcd7072cceddfa673beac274de64108",
+      "lastModificationDate": 1772589768324,
+      "contentHash": "c6e712b9040ca4aa7cb011c6c4db8c8d",
       "sourceName": "contracts/strategies/AaveV3Strategy.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -803,8 +804,8 @@
       ]
     },
     "C:\\Users\\USER\\Desktop\\Projects\\OmniYield\\contracts\\evm\\contracts\\interfaces\\IStrategy.sol": {
-      "lastModificationDate": 1771543597190,
-      "contentHash": "39d209e31d82022ae1196df1411f3bfa",
+      "lastModificationDate": 1772589728787,
+      "contentHash": "eb8ee105637af50a7910a4abaffc047f",
       "sourceName": "contracts/interfaces/IStrategy.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -841,8 +842,8 @@
       ]
     },
     "C:\\Users\\USER\\Desktop\\Projects\\OmniYield\\contracts\\evm\\contracts\\mocks\\MockStrategy.sol": {
-      "lastModificationDate": 1771543987902,
-      "contentHash": "a0aa524dafb8e65eef8915096409ab21",
+      "lastModificationDate": 1772589766278,
+      "contentHash": "eb43b2f46db1eea1a94cfdefa5e8369d",
       "sourceName": "contracts/mocks/MockStrategy.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -881,8 +882,8 @@
       ]
     },
     "C:\\Users\\USER\\Desktop\\Projects\\OmniYield\\contracts\\evm\\contracts\\strategies\\AerodromeStrategy.sol": {
-      "lastModificationDate": 1772161938124,
-      "contentHash": "3dde6ef452576712e71518fabe04aeef",
+      "lastModificationDate": 1772590077692,
+      "contentHash": "00204b93aeba215c6123644825a1b458",
       "sourceName": "contracts/strategies/AerodromeStrategy.sol",
       "solcConfig": {
         "version": "0.8.20",
