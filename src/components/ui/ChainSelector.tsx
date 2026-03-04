@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Chain } from "@/lib/constants";
+import { useIsMobile } from "@/components/layout/Sidebar";
 
 interface ChainSelectorProps {
     value: Chain;
@@ -10,6 +11,8 @@ interface ChainSelectorProps {
 }
 
 export default function ChainSelector({ value, onChange }: ChainSelectorProps) {
+    const isMobile = useIsMobile();
+
     const chains: { id: Chain; label: string; icon: string }[] = [
         { id: "solana", label: "Solana", icon: "◎" },
         { id: "base", label: "Base", icon: "Ⓑ" },
@@ -17,7 +20,7 @@ export default function ChainSelector({ value, onChange }: ChainSelectorProps) {
 
     return (
         <div
-            className="flex items-center rounded-full p-1 relative"
+            className="flex items-center rounded-full p-0.5 md:p-1 relative"
             style={{
                 background: "var(--bg-tertiary)",
                 border: "1px solid var(--border)",
@@ -27,7 +30,7 @@ export default function ChainSelector({ value, onChange }: ChainSelectorProps) {
                 <button
                     key={chain.id}
                     onClick={() => onChange(chain.id)}
-                    className="relative z-10 flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-200 cursor-pointer"
+                    className="relative z-10 flex items-center gap-1 md:gap-1.5 px-2.5 md:px-4 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-medium transition-colors duration-200 cursor-pointer"
                     style={{
                         color:
                             value === chain.id ? "var(--text-primary)" : "var(--text-tertiary)",
@@ -48,7 +51,7 @@ export default function ChainSelector({ value, onChange }: ChainSelectorProps) {
                         />
                     )}
                     <span className="relative z-10">{chain.icon}</span>
-                    <span className="relative z-10">{chain.label}</span>
+                    {!isMobile && <span className="relative z-10">{chain.label}</span>}
                 </button>
             ))}
         </div>

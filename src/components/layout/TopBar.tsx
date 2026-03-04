@@ -34,11 +34,11 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
                 padding: isMobile ? "0 12px" : "0 24px",
             }}
         >
-            {/* Left: Logo on mobile, empty on desktop */}
-            <div className="flex items-center gap-3">
+            {/* Left: Logo on mobile */}
+            <div className="flex items-center gap-2 shrink-0">
                 {isMobile && (
                     <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0"
+                        className="w-7 h-7 rounded-md flex items-center justify-center font-bold text-[10px] shrink-0"
                         style={{ background: "var(--gradient-primary)", color: "#fff" }}
                     >
                         OY
@@ -46,7 +46,7 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
                 )}
                 {isMobile && (
                     <span
-                        className="font-bold text-base gradient-text"
+                        className="font-bold text-sm gradient-text hidden sm:inline"
                         style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)" }}
                     >
                         OmniYield
@@ -55,7 +55,7 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
             </div>
 
             {/* Right: Controls */}
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4">
                 <ChainSelector value={chain} onChange={onChainChange} />
 
                 {/* Notifications – hidden on small mobile */}
