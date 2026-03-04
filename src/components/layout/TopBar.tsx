@@ -19,6 +19,7 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
         isConnected,
         isConnecting,
         connect,
+        connectChain,
         disconnect,
     } = useWallet();
 
@@ -43,11 +44,8 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
     const handleChainConnect = useCallback((selectedChain: Chain) => {
         onChainChange(selectedChain);
         setShowDropdown(false);
-        // Small delay to let the chain context update before triggering connect
-        setTimeout(() => {
-            connect();
-        }, 100);
-    }, [onChainChange, connect]);
+        connectChain(selectedChain);
+    }, [onChainChange, connectChain]);
 
     return (
         <header

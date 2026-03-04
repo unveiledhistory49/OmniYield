@@ -19,6 +19,7 @@ export interface WalletInfo {
     isConnecting: boolean;
     chain: Chain;
     connect: () => void;
+    connectChain: (targetChain: Chain) => void;
     disconnect: () => void;
 }
 
@@ -51,8 +52,8 @@ export function useWallet(): WalletInfo {
         : evmAccount.isConnecting || evmAccount.isReconnecting;
 
     // 2. Actions
-    const connect = useCallback(() => {
-        if (isSolana) {
+    const connectForChain = useCallback((targetChain: Chain) => {
+        if (targetChain === "solana") {
             setSolanaModalVisible(true);
         } else {
             // For EVM (Base), we prefer MetaMask, but fallback to Injected
@@ -66,7 +67,11 @@ export function useWallet(): WalletInfo {
                 console.error("No suitable EVM connector found");
             }
         }
-    }, [isSolana, setSolanaModalVisible, evmConnectors, connectEvm]);
+    }, [setSolanaModalVisible, evmConnectors, connectEvm]);
+
+    const connect = useCallback(() => {
+        connectForChain(chain);
+    }, [chain, connectForChain]);
 
     const disconnect = useCallback(() => {
         if (isSolana) {
@@ -88,6 +93,7 @@ export function useWallet(): WalletInfo {
         isConnecting,
         chain,
         connect,
+        connectChain: connectForChain,
         disconnect,
     };
 }
