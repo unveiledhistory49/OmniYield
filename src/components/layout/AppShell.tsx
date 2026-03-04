@@ -1,11 +1,12 @@
 "use client";
 
-import Sidebar from "@/components/layout/Sidebar";
+import Sidebar, { useIsMobile } from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 import { useChain } from "@/providers/wallet-provider";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
     const { chain, setChain } = useChain();
+    const isMobile = useIsMobile();
 
     return (
         <>
@@ -14,10 +15,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <TopBar chain={chain} onChainChange={setChain} />
             <main
                 style={{
-                    marginLeft: "72px",
+                    marginLeft: isMobile ? "0" : "72px",
                     marginTop: "var(--topbar-height)",
                     minHeight: "calc(100vh - var(--topbar-height))",
-                    padding: "32px",
+                    padding: isMobile ? "16px" : "32px",
+                    paddingBottom: isMobile ? "80px" : "32px",
                 }}
             >
                 {children}

@@ -143,7 +143,7 @@ export default function AnalyticsPage() {
 
             {/* Tabs */}
             <div
-                className="inline-flex rounded-lg p-1 mb-8"
+                className="flex md:inline-flex rounded-lg p-1 mb-6 md:mb-8 overflow-x-auto"
                 style={{ background: "var(--bg-tertiary)", border: "1px solid var(--border)" }}
             >
                 {(
@@ -156,7 +156,7 @@ export default function AnalyticsPage() {
                     <button
                         key={id}
                         onClick={() => setTab(id)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all cursor-pointer"
+                        className="flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-medium transition-all cursor-pointer whitespace-nowrap"
                         style={{
                             background: tab === id ? "var(--bg-card)" : "transparent",
                             color: tab === id ? "var(--text-primary)" : "var(--text-tertiary)",
@@ -173,7 +173,7 @@ export default function AnalyticsPage() {
             {tab === "overview" && (
                 <div>
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-2">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-2">
                         {isLoading && <p className="text-xs text-cyan-400 mb-2 col-span-full animate-pulse">Establishing secure RCP connections... Fetching block data...</p>}
                         {error && <p className="text-xs text-red-400 mb-2 col-span-full break-all">● Remote Read Error: {error.message}</p>}
                         {liveData && !isLoading && !error && (
@@ -215,7 +215,7 @@ export default function AnalyticsPage() {
 
                     {/* Price Ticker from CoinGecko */}
                     {liveData && (
-                        <div className="flex items-center gap-6 mb-8 text-xs font-mono p-3 rounded-lg border" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg-card)' }}>
+                        <div className="flex flex-wrap items-center gap-3 md:gap-6 mb-6 md:mb-8 text-xs font-mono p-3 rounded-lg border" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg-card)' }}>
                             <span className="text-muted">Live Price Ticker</span>
                             <span>SOL: <span className="text-cyan-400">${liveData.prices.SOL.toFixed(2)}</span> <span className={liveData.changes24h.SOL >= 0 ? "text-green-400" : "text-red-400"}>{liveData.changes24h.SOL > 0 ? "+" : ""}{liveData.changes24h.SOL.toFixed(2)}%</span></span>
                             <span>JitoSOL: <span className="text-cyan-400">${liveData.prices.JitoSOL.toFixed(2)}</span></span>
@@ -224,8 +224,8 @@ export default function AnalyticsPage() {
                     )}
 
                     {/* TVL Chart */}
-                    <div className="glass-card p-6 mb-8" style={{ background: "var(--bg-card)" }}>
-                        <div className="flex items-center justify-between mb-6">
+                    <div className="glass-card p-4 md:p-6 mb-6 md:mb-8" style={{ background: "var(--bg-card)" }}>
+                        <div className="flex items-center justify-between mb-4 md:mb-6">
                             <h3 className="font-semibold">Total Value Locked</h3>
                             <div className="flex rounded-lg" style={{ border: "1px solid var(--border)" }}>
                                 {(["1M", "3M", "6M"] as TimeRange[]).map((t) => (
@@ -285,11 +285,11 @@ export default function AnalyticsPage() {
                     </div>
 
                     {/* Pie Charts Row */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         {/* Chain Distribution */}
-                        <div className="glass-card p-6" style={{ background: "var(--bg-card)" }}>
+                        <div className="glass-card p-4 md:p-6" style={{ background: "var(--bg-card)" }}>
                             <h3 className="font-semibold mb-4">TVL by Chain</h3>
-                            <div className="flex items-center gap-8">
+                            <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-8">
                                 <ResponsiveContainer width={160} height={160}>
                                     <PieChart>
                                         <Pie
@@ -327,9 +327,9 @@ export default function AnalyticsPage() {
                         </div>
 
                         {/* Protocol Distribution */}
-                        <div className="glass-card p-6" style={{ background: "var(--bg-card)" }}>
+                        <div className="glass-card p-4 md:p-6" style={{ background: "var(--bg-card)" }}>
                             <h3 className="font-semibold mb-4">TVL by Protocol</h3>
-                            <div className="flex items-center gap-8">
+                            <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-8">
                                 <ResponsiveContainer width={160} height={160}>
                                     <PieChart>
                                         <Pie
@@ -372,94 +372,96 @@ export default function AnalyticsPage() {
             {/* Vault Rankings Tab */}
             {tab === "vaults" && (
                 <div className="glass-card overflow-hidden" style={{ background: "var(--bg-card)" }}>
-                    <div className="px-6 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
+                    <div className="px-4 md:px-6 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
                         <h3 className="font-semibold">Top Vaults by Live APY</h3>
                     </div>
-                    <table className="data-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Vault</th>
-                                <th>Chain</th>
-                                <th>APY</th>
-                                <th>TVL</th>
-                                <th>Strategy</th>
-                                <th>Risk</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {liveVaults.length === 0 && (
+                    <div className="table-scroll-wrapper">
+                        <table className="data-table">
+                            <thead>
                                 <tr>
-                                    <td colSpan={7} className="text-center py-8 text-sm text-cyan-500 animate-pulse">Syncing nodes...</td>
+                                    <th>#</th>
+                                    <th>Vault</th>
+                                    <th>Chain</th>
+                                    <th>APY</th>
+                                    <th>TVL</th>
+                                    <th>Strategy</th>
+                                    <th>Risk</th>
                                 </tr>
-                            )}
-                            {liveVaults.map((vault, i) => (
-                                <motion.tr
-                                    key={vault.id}
-                                    initial={{ opacity: 0, x: -12 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.3, delay: i * 0.05 }}
-                                >
-                                    <td>
-                                        <span
-                                            className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold"
-                                            style={{
-                                                background:
-                                                    i === 0
-                                                        ? "var(--green-glow)"
-                                                        : i === 1
-                                                            ? "var(--cyan-glow)"
-                                                            : i === 2
-                                                                ? "var(--purple-glow)"
-                                                                : "var(--glass)",
-                                                color:
-                                                    i === 0
-                                                        ? "var(--green)"
-                                                        : i === 1
-                                                            ? "var(--cyan)"
-                                                            : i === 2
-                                                                ? "var(--purple)"
-                                                                : "var(--text-tertiary)",
-                                            }}
-                                        >
-                                            {i + 1}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <span className="font-medium">{vault.name}</span>
-                                            <div className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                                                {vault.protocol}
+                            </thead>
+                            <tbody>
+                                {liveVaults.length === 0 && (
+                                    <tr>
+                                        <td colSpan={7} className="text-center py-8 text-sm text-cyan-500 animate-pulse">Syncing nodes...</td>
+                                    </tr>
+                                )}
+                                {liveVaults.map((vault, i) => (
+                                    <motion.tr
+                                        key={vault.id}
+                                        initial={{ opacity: 0, x: -12 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ duration: 0.3, delay: i * 0.05 }}
+                                    >
+                                        <td>
+                                            <span
+                                                className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold"
+                                                style={{
+                                                    background:
+                                                        i === 0
+                                                            ? "var(--green-glow)"
+                                                            : i === 1
+                                                                ? "var(--cyan-glow)"
+                                                                : i === 2
+                                                                    ? "var(--purple-glow)"
+                                                                    : "var(--glass)",
+                                                    color:
+                                                        i === 0
+                                                            ? "var(--green)"
+                                                            : i === 1
+                                                                ? "var(--cyan)"
+                                                                : i === 2
+                                                                    ? "var(--purple)"
+                                                                    : "var(--text-tertiary)",
+                                                }}
+                                            >
+                                                {i + 1}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <span className="font-medium">{vault.name}</span>
+                                                <div className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                                                    {vault.protocol}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium chain-${vault.chain}`}>
-                                            {vault.chain === "solana" ? "◎ Solana" : "Ⓑ Base"}
-                                        </span>
-                                    </td>
-                                    <td style={{ color: "var(--green)", fontWeight: 700 }}>
-                                        {formatAPY(vault.apy)}
-                                    </td>
-                                    <td style={{ color: "var(--text-secondary)" }}>
-                                        {formatCurrency(vault.tvl)}
-                                    </td>
-                                    <td style={{ color: "var(--text-secondary)" }}>{vault.strategy}</td>
-                                    <td>
-                                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium risk-${vault.riskLevel}`}>
-                                            {vault.riskLevel}
-                                        </span>
-                                    </td>
-                                </motion.tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                        </td>
+                                        <td>
+                                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium chain-${vault.chain}`}>
+                                                {vault.chain === "solana" ? "◎ Solana" : "Ⓑ Base"}
+                                            </span>
+                                        </td>
+                                        <td style={{ color: "var(--green)", fontWeight: 700 }}>
+                                            {formatAPY(vault.apy)}
+                                        </td>
+                                        <td style={{ color: "var(--text-secondary)" }}>
+                                            {formatCurrency(vault.tvl)}
+                                        </td>
+                                        <td style={{ color: "var(--text-secondary)" }}>{vault.strategy}</td>
+                                        <td>
+                                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium risk-${vault.riskLevel}`}>
+                                                {vault.riskLevel}
+                                            </span>
+                                        </td>
+                                    </motion.tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
 
             {/* Chain Breakdown Tab */}
             {tab === "chains" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     {[
                         {
                             chain: "Solana",

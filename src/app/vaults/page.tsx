@@ -67,7 +67,7 @@ export default function VaultsPage() {
     return (
         <div>
             {/* Header */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 md:mb-8">
                 <div>
                     <h1
                         className="text-3xl font-bold mb-1"
@@ -84,23 +84,23 @@ export default function VaultsPage() {
                 </div>
 
                 {/* Controls */}
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3 w-full md:w-auto">
                     {/* Search */}
                     <div
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg flex-1 md:flex-initial min-w-0"
                         style={{
                             background: "var(--bg-card)",
                             border: "1px solid var(--border)",
                         }}
                     >
-                        <Search size={16} style={{ color: "var(--text-muted)" }} />
+                        <Search size={16} style={{ color: "var(--text-muted)" }} className="shrink-0" />
                         <input
                             type="text"
                             placeholder="Search vaults..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="bg-transparent border-none outline-none text-sm"
-                            style={{ color: "var(--text-primary)", width: "160px" }}
+                            className="bg-transparent border-none outline-none text-sm w-full md:w-[160px]"
+                            style={{ color: "var(--text-primary)" }}
                         />
                     </div>
 
@@ -153,107 +153,109 @@ export default function VaultsPage() {
                     className="glass-card overflow-hidden"
                     style={{ background: "var(--bg-card)" }}
                 >
-                    <table className="data-table">
-                        <thead>
-                            <tr>
-                                <th>Vault</th>
-                                <th>Chain</th>
-                                <th>Asset</th>
-                                <th>
-                                    <button
-                                        className="flex items-center gap-1 cursor-pointer"
-                                        onClick={() => handleSort("apy")}
-                                        style={{ color: sortKey === "apy" ? "var(--cyan)" : undefined }}
+                    <div className="table-scroll-wrapper">
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Vault</th>
+                                    <th>Chain</th>
+                                    <th>Asset</th>
+                                    <th>
+                                        <button
+                                            className="flex items-center gap-1 cursor-pointer"
+                                            onClick={() => handleSort("apy")}
+                                            style={{ color: sortKey === "apy" ? "var(--cyan)" : undefined }}
+                                        >
+                                            APY <ArrowUpDown size={12} />
+                                        </button>
+                                    </th>
+                                    <th>
+                                        <button
+                                            className="flex items-center gap-1 cursor-pointer"
+                                            onClick={() => handleSort("tvl")}
+                                            style={{ color: sortKey === "tvl" ? "var(--cyan)" : undefined }}
+                                        >
+                                            TVL <ArrowUpDown size={12} />
+                                        </button>
+                                    </th>
+                                    <th>Strategy</th>
+                                    <th>Risk</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredVaults.map((vault, i) => (
+                                    <motion.tr
+                                        key={vault.id}
+                                        initial={{ opacity: 0, y: 8 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.3, delay: i * 0.04 }}
                                     >
-                                        APY <ArrowUpDown size={12} />
-                                    </button>
-                                </th>
-                                <th>
-                                    <button
-                                        className="flex items-center gap-1 cursor-pointer"
-                                        onClick={() => handleSort("tvl")}
-                                        style={{ color: sortKey === "tvl" ? "var(--cyan)" : undefined }}
-                                    >
-                                        TVL <ArrowUpDown size={12} />
-                                    </button>
-                                </th>
-                                <th>Strategy</th>
-                                <th>Risk</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredVaults.map((vault, i) => (
-                                <motion.tr
-                                    key={vault.id}
-                                    initial={{ opacity: 0, y: 8 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3, delay: i * 0.04 }}
-                                >
-                                    <td>
-                                        <div className="flex flex-col">
-                                            <span className="font-medium">{vault.name}</span>
-                                            <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                                                {vault.protocol}
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span
-                                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium chain-${vault.chain}`}
-                                        >
-                                            {vault.chain === "solana" ? "◎" : "Ⓑ"} {vault.chain === "solana" ? "Solana" : "Base"}
-                                        </span>
-                                    </td>
-                                    <td className="font-medium">{vault.asset}</td>
-                                    <td>
-                                        <span
-                                            className="font-bold"
-                                            style={{ color: "var(--green)" }}
-                                        >
-                                            {formatAPY(vault.apy)}
-                                        </span>
-                                    </td>
-                                    <td style={{ color: "var(--text-secondary)" }}>
-                                        {formatCurrency(vault.tvl)}
-                                    </td>
-                                    <td>
-                                        <span
-                                            className="inline-flex items-center gap-1 text-xs"
-                                            style={{ color: "var(--text-secondary)" }}
-                                        >
-                                            <TrendingUp size={12} /> {vault.strategy}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span
-                                            className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium risk-${vault.riskLevel}`}
-                                        >
-                                            {vault.riskLevel}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <Link href={`/vaults/${vault.id}`}>
-                                            <button
-                                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer"
-                                                style={{
-                                                    background: "var(--glass)",
-                                                    border: "1px solid var(--border)",
-                                                    color: "var(--cyan)",
-                                                }}
+                                        <td>
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">{vault.name}</span>
+                                                <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                                                    {vault.protocol}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span
+                                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium chain-${vault.chain}`}
                                             >
-                                                Deposit <ExternalLink size={12} />
-                                            </button>
-                                        </Link>
-                                    </td>
-                                </motion.tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                                {vault.chain === "solana" ? "◎" : "Ⓑ"} {vault.chain === "solana" ? "Solana" : "Base"}
+                                            </span>
+                                        </td>
+                                        <td className="font-medium">{vault.asset}</td>
+                                        <td>
+                                            <span
+                                                className="font-bold"
+                                                style={{ color: "var(--green)" }}
+                                            >
+                                                {formatAPY(vault.apy)}
+                                            </span>
+                                        </td>
+                                        <td style={{ color: "var(--text-secondary)" }}>
+                                            {formatCurrency(vault.tvl)}
+                                        </td>
+                                        <td>
+                                            <span
+                                                className="inline-flex items-center gap-1 text-xs"
+                                                style={{ color: "var(--text-secondary)" }}
+                                            >
+                                                <TrendingUp size={12} /> {vault.strategy}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span
+                                                className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium risk-${vault.riskLevel}`}
+                                            >
+                                                {vault.riskLevel}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <Link href={`/vaults/${vault.id}`}>
+                                                <button
+                                                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer"
+                                                    style={{
+                                                        background: "var(--glass)",
+                                                        border: "1px solid var(--border)",
+                                                        color: "var(--cyan)",
+                                                    }}
+                                                >
+                                                    Deposit <ExternalLink size={12} />
+                                                </button>
+                                            </Link>
+                                        </td>
+                                    </motion.tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             ) : (
                 /* Cards View */
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
                     {filteredVaults.map((vault, i) => (
                         <motion.div
                             key={vault.id}

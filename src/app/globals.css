@@ -382,3 +382,65 @@ h1, h2, h3, h4, h5, h6 {
   color: #627EEA;
   background: rgba(98, 126, 234, 0.15);
 }
+
+/* ============================================
+   Table scroll wrapper for mobile
+   ============================================ */
+.table-scroll-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* ============================================
+   Mobile Responsive Overrides
+   ============================================ */
+@media (max-width: 768px) {
+  :root {
+    --topbar-height: 56px;
+  }
+
+  .stat-card {
+    padding: 14px 16px;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1.2rem;
+  }
+
+  .stat-card .stat-label {
+    font-size: 0.7rem;
+  }
+
+  .glass-card {
+    border-radius: var(--radius-md);
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-green {
+    min-height: 44px;
+    padding: 10px 20px;
+    font-size: 0.875rem;
+  }
+
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  .data-table thead th {
+    font-size: 0.65rem;
+    padding: 8px 10px;
+    white-space: nowrap;
+  }
+
+  .data-table tbody td {
+    padding: 10px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+}

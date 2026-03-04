@@ -1,0 +1,17 @@
+# Master Environment Variables for Vercel Deployment
+# ---------------------------------------------------
+# You can copy and paste these values into the Vercel dashboard.
+
+# Next.js / Frontend APIs
+COINGECKO_API_KEY=CG-pa4Vb3oG5wbZTghqii6LPP5d
+HELIUS_API_KEY=120ba7c1-2734-41e6-ac51-7044dc0d42e1
+
+# Smart Contracts / RPC
+BASE_SEPOLIA_RPC_URL=https://go.getblock.io/d284bbb732584cb499123fb3d7ffc59a
+
+# Private Key (Be extremely careful with this in production!)
+PRIVATE_KEY=5aebbc34dd6ac9e210ecef0758c9605ce343f56a5047da2a6dbc0bc43577ddd0
+
+# Required for Gasless Deposits/Pimlico Paymaster integration
+# (You will need to add your actual API key here)
+NEXT_PUBLIC_PIMLICO_API_KEY=pim_9bemTephqmcEZzkGZ58uim

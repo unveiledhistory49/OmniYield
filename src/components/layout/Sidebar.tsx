@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,10 +29,76 @@ const navItems = [
     { label: "Settings", href: "/settings", icon: "Settings" },
 ];
 
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth < 768);
+        check();
+        window.addEventListener("resize", check);
+        return () => window.removeEventListener("resize", check);
+    }, []);
+    return isMobile;
+}
+
+export { useIsMobile };
+
 export default function Sidebar() {
     const pathname = usePathname();
     const [expanded, setExpanded] = useState(false);
+    const isMobile = useIsMobile();
 
+    /* ─── Mobile: Bottom Tab Bar ─── */
+    if (isMobile) {
+        return (
+            <nav
+                className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around"
+                style={{
+                    height: "64px",
+                    background: "rgba(10, 14, 26, 0.92)",
+                    backdropFilter: "blur(20px)",
+                    borderTop: "1px solid var(--border)",
+                    paddingBottom: "env(safe-area-inset-bottom, 0px)",
+                }}
+            >
+                {navItems.map((item) => {
+                    const Icon = iconMap[item.icon];
+                    const isActive = pathname === item.href;
+
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className="flex flex-col items-center justify-center gap-0.5 py-1 px-2 relative"
+                            style={{
+                                color: isActive ? "var(--cyan)" : "var(--text-tertiary)",
+                                minWidth: "56px",
+                            }}
+                        >
+                            {isActive && (
+                                <motion.div
+                                    layoutId="mobile-tab-active"
+                                    className="absolute -top-px left-2 right-2 h-[2px] rounded-b-full"
+                                    style={{ background: "var(--cyan)" }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                />
+                            )}
+                            <Icon size={20} className="shrink-0" />
+                            <span
+                                className="text-[10px] font-medium leading-tight"
+                                style={{
+                                    color: isActive ? "var(--cyan)" : "var(--text-muted)",
+                                }}
+                            >
+                                {item.label}
+                            </span>
+                        </Link>
+                    );
+                })}
+            </nav>
+        );
+    }
+
+    /* ─── Desktop: Collapsible Sidebar ─── */
     return (
         <motion.aside
             className="fixed left-0 top-0 h-screen z-50 flex flex-col"

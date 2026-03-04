@@ -75,18 +75,18 @@ export default function HeroPage() {
   };
 
   return (
-    <div style={{ marginLeft: "-32px", marginTop: "-32px", marginRight: "-32px" }}>
+    <div className="hero-wrapper" style={{ margin: "-16px -16px 0" }}>
       {/* Hero Section */}
       <section
         className="relative flex flex-col items-center justify-center text-center overflow-hidden"
         style={{
           minHeight: "calc(100vh - var(--topbar-height))",
-          padding: "80px 24px",
+          padding: "40px 16px 60px",
         }}
       >
         {/* Glow orbs */}
         <div
-          className="absolute"
+          className="absolute hidden md:block"
           style={{
             width: "600px",
             height: "600px",
@@ -98,7 +98,7 @@ export default function HeroPage() {
           }}
         />
         <div
-          className="absolute"
+          className="absolute hidden md:block"
           style={{
             width: "500px",
             height: "500px",
@@ -115,7 +115,7 @@ export default function HeroPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-8"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-6 md:mb-8"
           style={{
             background: "var(--cyan-glow)",
             border: "1px solid rgba(0, 212, 255, 0.2)",
@@ -131,7 +131,7 @@ export default function HeroPage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-bold leading-tight mb-6"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6"
           style={{
             maxWidth: "800px",
             fontFamily: "var(--font-outfit, 'Outfit', sans-serif)",
@@ -146,7 +146,7 @@ export default function HeroPage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-lg md:text-xl mb-10"
+          className="text-base md:text-lg lg:text-xl mb-8 md:mb-10 px-4"
           style={{
             color: "var(--text-secondary)",
             maxWidth: "560px",
@@ -161,10 +161,10 @@ export default function HeroPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex items-center gap-8 mb-12"
+          className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 mb-8 md:mb-12"
         >
           <div className="text-center">
-            <div className="text-4xl md:text-5xl font-bold mb-1">
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-1">
               <AnimatedCounter target={stats.totalTVL} />
             </div>
             <div className="text-sm" style={{ color: "var(--text-tertiary)" }}>
@@ -172,12 +172,16 @@ export default function HeroPage() {
             </div>
           </div>
           <div
-            className="w-px h-12"
+            className="hidden sm:block w-px h-12"
+            style={{ background: "var(--border)" }}
+          />
+          <div
+            className="block sm:hidden w-12 h-px"
             style={{ background: "var(--border)" }}
           />
           <div className="text-center">
             <div
-              className="text-4xl md:text-5xl font-bold"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold"
               style={{
                 color: "var(--green)",
                 fontFamily: "var(--font-outfit, 'Outfit', sans-serif)",
@@ -196,15 +200,15 @@ export default function HeroPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex items-center gap-4"
+          className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0"
         >
-          <Link href="/vaults">
-            <button className="btn-green flex items-center gap-2 text-base">
+          <Link href="/vaults" className="w-full sm:w-auto">
+            <button className="btn-green flex items-center justify-center gap-2 text-base w-full sm:w-auto">
               Start Earning <ArrowRight size={18} />
             </button>
           </Link>
-          <Link href="/analytics">
-            <button className="btn-secondary text-base">View Analytics</button>
+          <Link href="/analytics" className="w-full sm:w-auto">
+            <button className="btn-secondary text-base w-full sm:w-auto">View Analytics</button>
           </Link>
         </motion.div>
 
@@ -213,7 +217,7 @@ export default function HeroPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="mt-16 w-full max-w-4xl px-4"
+          className="mt-10 md:mt-16 w-full max-w-4xl px-2 md:px-4"
         >
           <CrossChainDeposit />
         </motion.div>
@@ -223,15 +227,15 @@ export default function HeroPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex items-center gap-6 mt-20"
+          className="flex flex-wrap items-center justify-center gap-3 md:gap-6 mt-12 md:mt-20 px-4"
         >
-          <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+          <span className="text-xs w-full text-center md:w-auto" style={{ color: "var(--text-muted)" }}>
             POWERED BY
           </span>
           {protocols.map((name) => (
             <span
               key={name}
-              className="text-sm font-medium px-3 py-1 rounded-full"
+              className="text-xs md:text-sm font-medium px-3 py-1 rounded-full"
               style={{
                 color: "var(--text-tertiary)",
                 background: "var(--glass)",
@@ -246,24 +250,24 @@ export default function HeroPage() {
 
       {/* Features Section */}
       <section
-        className="py-24 px-8"
+        className="py-12 md:py-24 px-4 md:px-8"
         style={{ borderTop: "1px solid var(--border)" }}
       >
         <div className="max-w-5xl mx-auto">
           <h2
-            className="text-3xl font-bold text-center mb-4"
+            className="text-2xl md:text-3xl font-bold text-center mb-4"
             style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)" }}
           >
             Why <span className="gradient-text">OmniYield</span>?
           </h2>
           <p
-            className="text-center mb-16"
-            style={{ color: "var(--text-secondary)", maxWidth: "480px", margin: "0 auto 64px" }}
+            className="text-center text-sm md:text-base mb-10 md:mb-16"
+            style={{ color: "var(--text-secondary)", maxWidth: "480px", margin: "0 auto 40px" }}
           >
             Built for serious DeFi users who demand the best yield without managing multiple positions.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {features.map((feature, i) => (
               <motion.div
                 key={feature.title}
@@ -271,7 +275,7 @@ export default function HeroPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="glass-card p-6 flex flex-col items-start gap-4"
+                className="glass-card p-5 md:p-6 flex flex-col items-start gap-3 md:gap-4"
               >
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center"
@@ -282,7 +286,7 @@ export default function HeroPage() {
                 >
                   <feature.icon size={20} />
                 </div>
-                <h3 className="font-semibold text-lg">{feature.title}</h3>
+                <h3 className="font-semibold text-base md:text-lg">{feature.title}</h3>
                 <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
                   {feature.description}
                 </p>
@@ -294,10 +298,10 @@ export default function HeroPage() {
 
       {/* Stats Bar */}
       <section
-        className="py-16 px-8"
+        className="py-10 md:py-16 px-4 md:px-8"
         style={{ borderTop: "1px solid var(--border)", background: "var(--bg-secondary)" }}
       >
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-center">
           {[
             { label: "Total Value Locked", value: formatCurrency(stats.totalTVL) },
             { label: "Total Users", value: stats.totalUsers.toLocaleString() },
@@ -306,7 +310,7 @@ export default function HeroPage() {
           ].map((stat) => (
             <div key={stat.label}>
               <div
-                className="text-2xl font-bold mb-1"
+                className="text-xl md:text-2xl font-bold mb-1"
                 style={{
                   fontFamily: "var(--font-outfit, 'Outfit', sans-serif)",
                   color: "var(--text-primary)",

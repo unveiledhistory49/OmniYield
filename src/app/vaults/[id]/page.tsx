@@ -146,9 +146,9 @@ export default function VaultDetailPage() {
             <div className="flex flex-col md:flex-row gap-8 mb-8">
                 <div className="flex-1">
                     {/* Title Row */}
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
                         <h1
-                            className="text-3xl font-bold"
+                            className="text-2xl md:text-3xl font-bold"
                             style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)" }}
                         >
                             {vault.name}
@@ -173,13 +173,13 @@ export default function VaultDetailPage() {
 
             {/* Real Data Banner (Sepolia Only) */}
             {isSepolia && (
-                <div className="mb-8 p-4 rounded-lg flex flex-wrap items-center justify-between gap-4"
+                <div className="mb-6 md:mb-8 p-3 md:p-4 rounded-lg flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-3 md:gap-4"
                     style={{ background: "rgba(98, 126, 234, 0.1)", border: "1px solid rgba(98, 126, 234, 0.2)" }}>
                     <div className="flex items-center gap-2">
                         <Info size={16} className="text-[#627EEA]" />
                         <span className="text-sm">Connected to Sepolia Testnet. Balances are real.</span>
                     </div>
-                    <div className="flex items-center gap-4 text-sm font-medium">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 text-sm font-medium">
                         <div>
                             <span className="text-gray-400 mr-2">Vault Balance:</span>
                             {userVaultBalance.toFixed(2)} OYV
@@ -196,7 +196,7 @@ export default function VaultDetailPage() {
             )}
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
                 {[
                     {
                         label: "Current APY",
@@ -240,7 +240,7 @@ export default function VaultDetailPage() {
                 {/* Charts Column */}
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {/* APY Chart */}
-                    <div className="glass-card p-6" style={{ background: "var(--bg-card)" }}>
+                    <div className="glass-card p-4 md:p-6" style={{ background: "var(--bg-card)" }}>
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="font-semibold">APY History</h3>
                             <div className="flex rounded-lg" style={{ border: "1px solid var(--border)" }}>
@@ -301,7 +301,7 @@ export default function VaultDetailPage() {
                     </div>
 
                     {/* TVL Chart */}
-                    <div className="glass-card p-6" style={{ background: "var(--bg-card)" }}>
+                    <div className="glass-card p-4 md:p-6" style={{ background: "var(--bg-card)" }}>
                         <h3 className="font-semibold mb-6">TVL Growth</h3>
                         <ResponsiveContainer width="100%" height={200}>
                             <AreaChart data={tvlChartData}>
@@ -351,7 +351,7 @@ export default function VaultDetailPage() {
                 {/* Deposit / Withdraw Panel */}
                 <div className="lg:col-span-1">
                     <div
-                        className="glass-card p-6 sticky top-24"
+                        className="glass-card p-4 md:p-6 sticky top-24"
                         style={{ background: "var(--bg-card)" }}
                     >
                         {/* Tabs */}

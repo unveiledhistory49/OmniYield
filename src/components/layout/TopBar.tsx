@@ -1,9 +1,10 @@
 "use client";
 
 import ChainSelector from "@/components/ui/ChainSelector";
-import { Wallet, Bell, LogOut } from "lucide-react";
+import { Wallet, Bell, LogOut, Menu } from "lucide-react";
 import type { Chain } from "@/lib/constants";
 import { useWallet } from "@/lib/hooks/useWallet";
+import { useIsMobile } from "@/components/layout/Sidebar";
 
 interface TopBarProps {
     chain: Chain;
@@ -19,37 +20,47 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
         disconnect,
     } = useWallet();
 
+    const isMobile = useIsMobile();
+
     return (
         <header
-            className="fixed top-0 right-0 z-40 flex items-center justify-between px-6"
+            className="fixed top-0 right-0 z-40 flex items-center justify-between"
             style={{
-                left: "72px",
+                left: isMobile ? "0" : "72px",
                 height: "var(--topbar-height)",
                 background: "rgba(10, 14, 26, 0.8)",
                 backdropFilter: "blur(16px)",
                 borderBottom: "1px solid var(--border)",
+                padding: isMobile ? "0 12px" : "0 24px",
             }}
         >
-            {/* Left: Page context */}
-            <div className="flex items-center gap-4">
-                <h2
-                    className="text-lg font-semibold"
-                    style={{
-                        fontFamily: "var(--font-outfit, 'Outfit', sans-serif)",
-                        color: "var(--text-primary)",
-                    }}
-                >
-                    {/* Page title injected by pages */}
-                </h2>
+            {/* Left: Logo on mobile, empty on desktop */}
+            <div className="flex items-center gap-3">
+                {isMobile && (
+                    <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0"
+                        style={{ background: "var(--gradient-primary)", color: "#fff" }}
+                    >
+                        OY
+                    </div>
+                )}
+                {isMobile && (
+                    <span
+                        className="font-bold text-base gradient-text"
+                        style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)" }}
+                    >
+                        OmniYield
+                    </span>
+                )}
             </div>
 
             {/* Right: Controls */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
                 <ChainSelector value={chain} onChange={onChainChange} />
 
-                {/* Notifications */}
+                {/* Notifications – hidden on small mobile */}
                 <button
-                    className="relative p-2 rounded-lg transition-colors duration-200"
+                    className="relative p-2 rounded-lg transition-colors duration-200 hidden sm:flex"
                     style={{
                         background: "var(--glass)",
                         border: "1px solid var(--border)",
@@ -67,7 +78,7 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
                 {isConnected ? (
                     <div className="flex items-center gap-2">
                         <div
-                            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+                            className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg text-sm font-medium"
                             style={{
                                 background: "var(--glass)",
                                 border: "1px solid var(--border)",
@@ -78,7 +89,10 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
                                 className="w-2 h-2 rounded-full"
                                 style={{ background: "var(--green)" }}
                             />
-                            {displayAddress}
+                            <span className="hidden sm:inline">{displayAddress}</span>
+                            <span className="sm:hidden text-xs">
+                                {displayAddress?.slice(0, 4)}...
+                            </span>
                         </div>
                         <button
                             onClick={disconnect}
@@ -97,7 +111,7 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
                     <button
                         onClick={connect}
                         disabled={isConnecting}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer"
+                        className="flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer"
                         style={{
                             background: "var(--gradient-primary)",
                             color: "#fff",
@@ -105,7 +119,12 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
                         }}
                     >
                         <Wallet size={16} />
-                        {isConnecting ? "Connecting..." : "Connect Wallet"}
+                        <span className="hidden sm:inline">
+                            {isConnecting ? "Connecting..." : "Connect Wallet"}
+                        </span>
+                        <span className="sm:hidden text-xs">
+                            {isConnecting ? "..." : "Connect"}
+                        </span>
                     </button>
                 )}
             </div>

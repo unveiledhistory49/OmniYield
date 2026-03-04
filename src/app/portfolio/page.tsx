@@ -66,7 +66,7 @@ export default function PortfolioPage() {
             )}
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
                 {[
                     {
                         label: "Total Deposited",
@@ -112,7 +112,7 @@ export default function PortfolioPage() {
             </div>
 
             {/* Portfolio Value Over Time */}
-            <div className="glass-card p-6 mb-8" style={{ background: "var(--bg-card)" }}>
+            <div className="glass-card p-4 md:p-6 mb-6 md:mb-8" style={{ background: "var(--bg-card)" }}>
                 <h3 className="font-semibold mb-6">Portfolio Value</h3>
                 <ResponsiveContainer width="100%" height={280}>
                     <AreaChart data={portfolioHistory}>
@@ -157,44 +157,46 @@ export default function PortfolioPage() {
 
             {/* Positions Table */}
             <div className="glass-card overflow-hidden" style={{ background: "var(--bg-card)" }}>
-                <div className="px-6 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
+                <div className="px-4 md:px-6 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
                     <h3 className="font-semibold">Active Positions</h3>
                 </div>
-                <table className="data-table">
-                    <thead>
-                        <tr>
-                            <th>Vault</th>
-                            <th>Chain</th>
-                            <th>Deposited</th>
-                            <th>Current Value</th>
-                            <th>Yield Earned</th>
-                            <th>APY</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {activePortfolio.map((pos, i) => (
-                            <motion.tr
-                                key={pos.vaultId}
-                                initial={{ opacity: 0, x: -12 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.3, delay: i * 0.06 }}
-                            >
-                                <td className="font-medium">{pos.vaultName}</td>
-                                <td>
-                                    <span
-                                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium chain-${pos.chain}`}
-                                    >
-                                        {pos.chain === "solana" ? "◎ Solana" : "Ⓑ Base"}
-                                    </span>
-                                </td>
-                                <td>{formatCurrency(pos.deposited)}</td>
-                                <td style={{ color: "var(--cyan)" }}>{formatCurrency(pos.currentValue)}</td>
-                                <td style={{ color: "var(--green)" }}>+{formatCurrency(pos.yieldEarned)}</td>
-                                <td style={{ color: "var(--green)" }}>{formatAPY(pos.apy)}</td>
-                            </motion.tr>
-                        ))}
-                    </tbody>
-                </table>
+                <div className="table-scroll-wrapper">
+                    <table className="data-table">
+                        <thead>
+                            <tr>
+                                <th>Vault</th>
+                                <th>Chain</th>
+                                <th>Deposited</th>
+                                <th>Current Value</th>
+                                <th>Yield Earned</th>
+                                <th>APY</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {activePortfolio.map((pos, i) => (
+                                <motion.tr
+                                    key={pos.vaultId}
+                                    initial={{ opacity: 0, x: -12 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.3, delay: i * 0.06 }}
+                                >
+                                    <td className="font-medium">{pos.vaultName}</td>
+                                    <td>
+                                        <span
+                                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium chain-${pos.chain}`}
+                                        >
+                                            {pos.chain === "solana" ? "◎ Solana" : "Ⓑ Base"}
+                                        </span>
+                                    </td>
+                                    <td>{formatCurrency(pos.deposited)}</td>
+                                    <td style={{ color: "var(--cyan)" }}>{formatCurrency(pos.currentValue)}</td>
+                                    <td style={{ color: "var(--green)" }}>+{formatCurrency(pos.yieldEarned)}</td>
+                                    <td style={{ color: "var(--green)" }}>{formatAPY(pos.apy)}</td>
+                                </motion.tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );
