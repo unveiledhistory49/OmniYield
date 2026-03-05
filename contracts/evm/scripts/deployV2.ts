@@ -16,13 +16,13 @@ async function main() {
         maxFeePerGas: ethers.parseUnits("5", "gwei"),
     };
 
-    // 1. Deploy fresh MockStrategy (V2 with harvest support)
-    console.log("\n1. Deploying V2 MockStrategy...");
-    const StrategyFactory = await ethers.getContractFactory("MockStrategy");
+    // 1. Deploy SimpleYieldStrategy
+    console.log("\n1. Deploying SimpleYieldStrategy...");
+    const StrategyFactory = await ethers.getContractFactory("SimpleYieldStrategy");
     const strategy = await StrategyFactory.deploy(MOCK_USDC_ADDRESS, gasOverrides);
     await strategy.waitForDeployment();
     const strategyAddress = await strategy.getAddress();
-    console.log(`   MockStrategy V2: ${strategyAddress}`);
+    console.log(`   SimpleYieldStrategy: ${strategyAddress}`);
 
     // Verify asset() works
     const strategyAsset = await strategy.asset();
@@ -50,7 +50,7 @@ async function main() {
     console.log("  OmniYield V2 Deployment Complete!");
     console.log("═══════════════════════════════════════");
     console.log(`  MockUSDC:        ${MOCK_USDC_ADDRESS}`);
-    console.log(`  MockStrategy V2: ${strategyAddress}`);
+    console.log(`  SimpleYieldStrategy: ${strategyAddress}`);
     console.log(`  Vault V2:        ${vaultAddress}`);
     console.log(`  Fee Recipient:   ${FEE_RECIPIENT}`);
     console.log(`  Performance Fee: ${PERFORMANCE_FEE_BPS / 100}%`);

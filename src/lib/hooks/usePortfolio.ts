@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useWallet } from "./useWallet";
-import { useOmniYieldAnalytics } from "@/hooks/useOmniYieldAnalytics";
+import { useOmniYield } from "./useOmniYield";
+import { formatUnits } from "viem";
+import { SEPOLIA_USDC_DECIMALS } from "../config/contracts";
 
 export interface Position {
     vaultId: string;
@@ -16,49 +18,78 @@ export interface Position {
 
 export function usePortfolio() {
     const { isConnected } = useWallet();
-    const { data: analytics } = useOmniYieldAnalytics();
-    const [positions, setPositions] = useState<Position[]>([]);
+    const { data: omniData } = useOmniYield();
+
+    const positions = useMemo<Position[]>(() => {
+        if (!isConnected || !omniData?.vaultBalance) return [];
+
+        const shares = omniData.vaultBalance as bigint;
+        if (shares === BigInt(0)) return [];
+
+        // Calculate current value from shares (assuming 18 decimals for MockERC20)
+        const sharesNum = parseFloat(formatUnits(shares, SEPOLIA_USDC_DECIMALS));
+        const totalAssetsNum = omniData.totalAssets
+            ? parseFloat(formatUnits(omniData.totalAssets as bigint, SEPOLIA_USDC_DECIMALS))
+            : 0;
+
+        // ERC4626: value = shares * totalAssets / totalSupply
+        // Since we're reading our balance (shares) and totalAssets, estimate value
+        const currentValue = sharesNum > 0 ? totalAssetsNum * (sharesNum / sharesNum) : 0;
+        const deposited = sharesNum; // Initial 1:1 ratio for first depositor
+        const yieldEarned = currentValue - deposited;
+
+        return [{
+            vaultId: "omniyield-usdc-vault",
+            vaultName: "OmniYield USDC Vault",
+            chain: "base",
+            deposited,
+            currentValue,
+            yieldEarned: yieldEarned > 0 ? yieldEarned : 0,
+            apy: 8.2, // Will come from analytics
+        }];
+    }, [isConnected, omniData?.vaultBalance, omniData?.totalAssets]);
 
     const stats = useMemo(() => {
-        if (!isConnected || !analytics) {
+        if (!isConnected || !omniData) {
             return {
-                totalTVL: 0,
-                totalUsers: 0,
-                totalYieldDistributed: 0,
+                totalDeposited: 0,
+                currentValue: 0,
+                totalYieldEarned: 0,
                 avgAPY: 0,
-                vaultCount: 0,
-                supportedChains: 0,
+                totalHarvested: 0,
+                totalFees: 0,
+                feeBps: 0,
             };
         }
+
+        const totalDeposited = positions.reduce((acc, p) => acc + p.deposited, 0);
+        const currentValue = positions.reduce((acc, p) => acc + p.currentValue, 0);
+        const totalYieldEarned = positions.reduce((acc, p) => acc + p.yieldEarned, 0);
+
+        const totalHarvested = omniData.totalHarvestedProfit
+            ? parseFloat(formatUnits(omniData.totalHarvestedProfit as bigint, SEPOLIA_USDC_DECIMALS))
+            : 0;
+        const totalFees = omniData.totalFeesCollected
+            ? parseFloat(formatUnits(omniData.totalFeesCollected as bigint, SEPOLIA_USDC_DECIMALS))
+            : 0;
+        const feeBps = omniData.performanceFeeBps
+            ? Number(omniData.performanceFeeBps)
+            : 0;
+
         return {
-            totalTVL: analytics.totalTVL,
-            totalUsers: 1420,
-            totalYieldDistributed: 120500,
-            avgAPY: analytics.vaults && analytics.vaults.length > 0 ? analytics.vaults.reduce((acc, v) => acc + v.apy, 0) / analytics.vaults.length : 0,
-            vaultCount: analytics.vaults.length,
-            supportedChains: 2,
+            totalDeposited,
+            currentValue,
+            totalYieldEarned,
+            avgAPY: positions.length > 0 ? positions.reduce((acc, p) => acc + p.apy, 0) / positions.length : 0,
+            totalHarvested,
+            totalFees,
+            feeBps,
         };
-    }, [isConnected, analytics]);
-
-    const deposit = useCallback(
-        (vaultId: string, amount: number) => {
-            console.log("Deposit requested:", vaultId, amount);
-        },
-        []
-    );
-
-    const withdraw = useCallback(
-        (vaultId: string, amount: number) => {
-            console.log("Withdraw requested:", vaultId, amount);
-        },
-        []
-    );
+    }, [isConnected, omniData, positions]);
 
     return {
-        positions: isConnected ? positions : [],
+        positions,
         stats,
         isLoading: false,
-        deposit,
-        withdraw,
     };
 }

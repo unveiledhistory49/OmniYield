@@ -1,14 +1,20 @@
 Deployed to Base Sepolia (Chain ID: 84532)
 
-=== V1 (Original) ===
-MockERC20 (Test USDC): 0xd702668C0E1BB35166F53965e74399f535fe32a4
-AerodromeStrategy: 0x6177f57dc7098a77a24D52f2b67158A564697539
-OmniYieldVault V1 (ERC4626): 0x3c9882B41906BE17A6963fFd3edaEe1467C6791b
+=== V3 (SimpleYieldStrategy — Current) ===
+TestUSDC:              0xd702668C0E1BB35166F53965e74399f535fe32a4 (18 decimals)
+SimpleYieldStrategy:   0x11d5A24060C6cECDefBEE4231272A72822c2B446
+OmniYieldVault:        0x88c115C3Fab2F18fFEAC14eC27E65C3854C4dEc4
+AaveV3Strategy:        0x596d2b5bf237712a66A57D3aEBfbb27699407907 (prod-ready)
+Fee Recipient:         0xfEF2B038297d23b27B5D92A2C6D10cDDc1937b3a
+Performance Fee:       15% (1500 bps, max 30%)
 
-=== V2 (With Auto-Compound + Fees) ===
-MockStrategy V2: 0x4873f47E864773000952E0eb83dB749d61c26e60
-OmniYieldVault V2 (ERC4626): 0xb70A0Ace4B5795F9cD89ABD53d920fB7407C6178
-Fee Recipient: 0xfEF2B038297d23b27B5D92A2C6D10cDDc1937b3a
-Performance Fee: 15% (1500 bps, max 30%)
+On-Chain State:
+  Total Assets:        534 USDC
+  Deployer Shares:     500 oyUSDC
+  Harvested Profit:    40 USDC
+  Fees Collected:      6 USDC
+  Harvest Events:      2
 
-V2 Features: harvest(), compound(), performance fees, feeRecipient, 37 tests passing
+=== Legacy Deployments ===
+V1 OmniYieldVault:     0x3c9882B41906BE17A6963fFd3edaEe1467C6791b
+V2 OmniYieldVault:     0xb70A0Ace4B5795F9cD89ABD53d920fB7407C6178

@@ -3,3 +3,4 @@
 /* eslint-disable */
 export * as aerodromeStrategySol from "./AerodromeStrategy.sol";
 export { AaveV3Strategy__factory } from "./AaveV3Strategy__factory";
+export { SimpleYieldStrategy__factory } from "./SimpleYieldStrategy__factory";

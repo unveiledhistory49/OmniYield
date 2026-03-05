@@ -1,5 +1,8 @@
-export const SEPOLIA_VAULT_ADDRESS = "0xb70A0Ace4B5795F9cD89ABD53d920fB7407C6178";
+export const SEPOLIA_VAULT_ADDRESS = "0x88c115C3Fab2F18fFEAC14eC27E65C3854C4dEc4";
 export const SEPOLIA_USDC_ADDRESS = "0xd702668C0E1BB35166F53965e74399f535fe32a4";
+
+// MockERC20 = 18 decimals (Aave V3 on Base Sepolia doesn't list USDC as reserve)
+export const SEPOLIA_USDC_DECIMALS = 18;
 
 export const VAULT_ABI = [
     {

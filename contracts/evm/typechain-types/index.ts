@@ -54,3 +54,5 @@ export type { IAerodromeGauge } from "./contracts/strategies/AerodromeStrategy.s
 export { IAerodromeGauge__factory } from "./factories/contracts/strategies/AerodromeStrategy.sol/IAerodromeGauge__factory";
 export type { IAerodromeRouter } from "./contracts/strategies/AerodromeStrategy.sol/IAerodromeRouter";
 export { IAerodromeRouter__factory } from "./factories/contracts/strategies/AerodromeStrategy.sol/IAerodromeRouter__factory";
+export type { SimpleYieldStrategy } from "./contracts/strategies/SimpleYieldStrategy";
+export { SimpleYieldStrategy__factory } from "./factories/contracts/strategies/SimpleYieldStrategy__factory";

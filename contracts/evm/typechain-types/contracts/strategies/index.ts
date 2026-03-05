@@ -4,3 +4,4 @@
 import type * as aerodromeStrategySol from "./AerodromeStrategy.sol";
 export type { aerodromeStrategySol };
 export type { AaveV3Strategy } from "./AaveV3Strategy";
+export type { SimpleYieldStrategy } from "./SimpleYieldStrategy";

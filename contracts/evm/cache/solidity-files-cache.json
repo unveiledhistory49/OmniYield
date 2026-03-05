@@ -922,6 +922,46 @@
         "IAerodromeGauge",
         "IAerodromeRouter"
       ]
+    },
+    "C:\\Users\\USER\\Desktop\\Projects\\OmniYield\\contracts\\evm\\contracts\\strategies\\SimpleYieldStrategy.sol": {
+      "lastModificationDate": 1772669696798,
+      "contentHash": "56e6c1fa1a55cae839ed35944b6d65f4",
+      "sourceName": "contracts/strategies/SimpleYieldStrategy.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IStrategy.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "SimpleYieldStrategy"
+      ]
     }
   }
 }

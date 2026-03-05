@@ -109,6 +109,10 @@ declare module "hardhat/types/runtime" {
       name: "IAerodromeRouter",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAerodromeRouter__factory>;
+    getContractFactory(
+      name: "SimpleYieldStrategy",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SimpleYieldStrategy__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -230,6 +234,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IAerodromeRouter>;
+    getContractAt(
+      name: "SimpleYieldStrategy",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SimpleYieldStrategy>;
 
     deployContract(
       name: "Ownable",
@@ -327,6 +336,10 @@ declare module "hardhat/types/runtime" {
       name: "IAerodromeRouter",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAerodromeRouter>;
+    deployContract(
+      name: "SimpleYieldStrategy",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SimpleYieldStrategy>;
 
     deployContract(
       name: "Ownable",
@@ -448,6 +461,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAerodromeRouter>;
+    deployContract(
+      name: "SimpleYieldStrategy",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SimpleYieldStrategy>;
 
     // default types
     getContractFactory(

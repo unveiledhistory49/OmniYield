@@ -4,8 +4,8 @@ const OmniYieldMockModule = buildModule("OmniYieldMockModule", (m) => {
     // 1. Deploy Mock USDC
     const mockUSDC = m.contract("MockERC20", ["Mock USDC", "mUSDC"]);
 
-    // 2. Deploy Mock Strategy
-    const mockStrategy = m.contract("MockStrategy", [mockUSDC]);
+    // 2. Deploy Strategy
+    const mockStrategy = m.contract("SimpleYieldStrategy", [mockUSDC]);
 
     // 3. Deploy Vault
     const vault = m.contract("OmniYieldVault", [

@@ -16,8 +16,8 @@ describe("OmniYieldVault", function () {
         const assetAddress = await mockUSDC.getAddress();
 
         // Deploy Mock Strategy
-        const MockStrategy = await hre.ethers.getContractFactory("MockStrategy");
-        const mockStrategy = await MockStrategy.deploy(assetAddress);
+        const SimpleYieldStrategy = await hre.ethers.getContractFactory("SimpleYieldStrategy");
+        const mockStrategy = await SimpleYieldStrategy.deploy(assetAddress);
         const strategyAddress = await mockStrategy.getAddress();
 
         // Deploy Vault with 15% fee (1500 bps)
