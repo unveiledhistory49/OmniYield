@@ -59,22 +59,28 @@ export function useOmniYieldAnalytics() {
 
             if (raw.data) {
                 for (const [name, match] of Object.entries<any>(raw.data)) {
-                    if (!match) continue;
+                    // CRITICAL: Exclude metadata objects from being treated as vault pools
+                    if (!match || name === "aaveV3Health") continue;
+
                     const vault = {
                         ...match,
                         id: name.toLowerCase().replace(/ /g, "-"),
                         name: name,
+                        apy: match.apy ?? 0,
+                        tvlUsd: match.tvlUsd ?? 0,
+                        chain: match.chain ?? "Unknown",
+                        protocol: match.project ?? match.protocol ?? "Unknown",
                     };
                     vaults.push(vault);
 
-                    totalTVL += match.tvlUsd || 0;
-                    if (match.chain === "Base") {
-                        baseTVL += match.tvlUsd || 0;
-                        if (name === "Aave v3 base usdc") aaveApy = match.apy || 0;
-                        if (name === "Aerodrome eth") aerodromeApy = match.apy || 0;
-                    } else if (match.chain === "Solana") {
-                        solTVL += match.tvlUsd || 0;
-                        if (name === "Kamino usdc") kaminoApy = match.apy || 0;
+                    totalTVL += vault.tvlUsd;
+                    if (vault.chain === "Base") {
+                        baseTVL += vault.tvlUsd;
+                        if (name === "Aave v3 base usdc") aaveApy = vault.apy;
+                        if (name === "Aerodrome eth") aerodromeApy = vault.apy;
+                    } else if (vault.chain === "Solana") {
+                        solTVL += vault.tvlUsd;
+                        if (name === "Kamino usdc") kaminoApy = vault.apy;
                     }
                 }
             }

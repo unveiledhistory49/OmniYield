@@ -68,7 +68,9 @@ export default function HeroPage() {
 
   const stats = {
     totalTVL: liveStats?.totalTVL || 0,
-    avgAPY: liveStats?.vaults && liveStats.vaults.length > 0 ? liveStats.vaults.reduce((acc, v) => acc + v.apy, 0) / liveStats.vaults.length : 0,
+    avgAPY: liveStats?.vaults && liveStats.vaults.length > 0
+      ? liveStats.vaults.reduce((acc, v) => acc + (Number(v.apy) || 0), 0) / liveStats.vaults.length
+      : 0,
     totalUsers: 1420,
     totalYieldDistributed: 120500,
     vaultCount: liveStats?.vaults?.length || 0,

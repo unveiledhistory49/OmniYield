@@ -35,9 +35,9 @@ export default function VaultsPage() {
             const q = search.toLowerCase();
             vaults = vaults.filter(
                 (v) =>
-                    v.name.toLowerCase().includes(q) ||
-                    v.protocol.toLowerCase().includes(q) ||
-                    v.asset.toLowerCase().includes(q)
+                    (v.name?.toLowerCase() || "").includes(q) ||
+                    (v.protocol?.toLowerCase() || "").includes(q) ||
+                    (v.asset?.toLowerCase() || "").includes(q)
             );
         }
 
