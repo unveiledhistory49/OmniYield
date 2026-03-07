@@ -294,10 +294,10 @@ export default function AnalyticsPage() {
                         </div>
                         <div className="w-full bg-neutral-900 rounded-lg overflow-hidden border" style={{ borderColor: 'var(--border)' }}>
                             <iframe
-                                src="https://dune.com/embeds/2699818/4488277"
+                                src="https://dune.com/embeds/2699818"
                                 width="100%"
                                 height="400"
-                                title="Dune Analytics - Aave V3 Base"
+                                title="Aave V3 - Base Market"
                                 className="border-0"
                             />
                         </div>
