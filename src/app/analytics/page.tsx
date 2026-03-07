@@ -180,18 +180,21 @@ export default function AnalyticsPage() {
     // Live Vault Array synthesized from the live DefiLlama data
     const liveVaults = useMemo(() => {
         if (!liveData?.vaults) return [];
-        return liveData.vaults.map((v) => ({
-            id: v.id,
-            name: v.name,
-            protocol: v.project,
-            chain: v.chain.toLowerCase(),
-            apy: v.apy,
-            tvl: v.tvlUsd,
-            strategy: v.project.includes('aave') ? 'Overcollateralized Lending' :
-                v.project.includes('aero') ? 'Concentrated Liquidity' :
-                    v.project.includes('kamino') ? 'Automated Lending' : 'Liquid Staking',
-            riskLevel: v.project.includes('aero') ? 'Medium' : 'Low',
-        })).sort((a, b) => b.apy - a.apy);
+        return liveData.vaults.map((v) => {
+            const project = String(v.project || v.protocol || "").toLowerCase();
+            return {
+                id: v.id,
+                name: v.name,
+                protocol: v.protocol || "Unknown",
+                chain: v.chain?.toLowerCase() || "unknown",
+                apy: v.apy || 0,
+                tvl: v.tvlUsd || 0,
+                strategy: project.includes('aave') ? 'Overcollateralized Lending' :
+                    project.includes('aero') ? 'Concentrated Liquidity' :
+                        project.includes('kamino') ? 'Automated Lending' : 'Liquid Staking',
+                riskLevel: project.includes('aero') ? 'Medium' : 'Low',
+            };
+        }).sort((a, b) => b.apy - a.apy);
     }, [liveData]);
 
     // TVL by chain

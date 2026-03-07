@@ -11,6 +11,7 @@ export interface DefiLlamaPool {
     apyReward: number | null;
     id: string;
     name: string;
+    protocol?: string;
 }
 
 export interface OmniAnalyticsData {
@@ -66,10 +67,12 @@ export function useOmniYieldAnalytics() {
                         ...match,
                         id: name.toLowerCase().replace(/ /g, "-"),
                         name: name,
-                        apy: match.apy ?? 0,
-                        tvlUsd: match.tvlUsd ?? 0,
-                        chain: match.chain ?? "Unknown",
-                        protocol: match.project ?? match.protocol ?? "Unknown",
+                        apy: Number(match.apy ?? 0),
+                        tvlUsd: Number(match.tvlUsd ?? 0),
+                        chain: String(match.chain ?? "Unknown"),
+                        project: String(match.project ?? match.protocol ?? "Unknown"),
+                        protocol: String(match.project ?? match.protocol ?? "Unknown"),
+                        symbol: String(match.symbol ?? "Unknown"),
                     };
                     vaults.push(vault);
 
