@@ -1,6 +1,0 @@
-Mainnet: 
-https://rpc.ankr.com/base/e39470e9f606a054345ebf0572e2a0b2e8cf231ce610092458ddd7322e4fc7dc
-
-Testnet:
-
-https://rpc.ankr.com/base_sepolia/e39470e9f606a054345ebf0572e2a0b2e8cf231ce610092458ddd7322e4fc7dc
