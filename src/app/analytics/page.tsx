@@ -284,6 +284,28 @@ export default function AnalyticsPage() {
                         </ResponsiveContainer>
                     </div>
 
+                    {/* Dune Analytics Flex */}
+                    <div className="glass-card p-4 md:p-6 mb-6 md:mb-8" style={{ background: "var(--bg-card)" }}>
+                        <div className="flex items-center justify-between mb-4 md:mb-6">
+                            <h3 className="font-semibold">Macro On-Chain Intelligence</h3>
+                            <span className="px-3 py-1 text-xs font-medium rounded-lg" style={{ background: "var(--green-glow)", color: "var(--green)" }}>
+                                Powered by Dune
+                            </span>
+                        </div>
+                        <div className="w-full bg-neutral-900 rounded-lg overflow-hidden border" style={{ borderColor: 'var(--border)' }}>
+                            <iframe
+                                src="https://dune.com/embeds/2699818/4488277"
+                                width="100%"
+                                height="400"
+                                title="Dune Analytics - Aave V3 Base"
+                                className="border-0"
+                            />
+                        </div>
+                        <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
+                            Live integration showing total Base chain adoption metrics, directly correlating to Aerodrome and Aave vault growth opportunities.
+                        </p>
+                    </div>
+
                     {/* Pie Charts Row */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         {/* Chain Distribution */}

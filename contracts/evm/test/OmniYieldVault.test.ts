@@ -134,9 +134,12 @@ describe("OmniYieldVault", function () {
             await mockUSDC.approve(vault.target, DEPOSIT_AMOUNT);
             await vault.deposit(DEPOSIT_AMOUNT, owner.address);
 
-            // All funds should be in strategy, vault balance = 0
-            expect(await mockUSDC.balanceOf(vault.target)).to.equal(0n);
-            expect(await mockUSDC.balanceOf(mockStrategy.target)).to.equal(DEPOSIT_AMOUNT);
+            // 10% of funds should be in vault, 90% in strategy
+            const expectedBuffer = (DEPOSIT_AMOUNT * 1000n) / 10000n;
+            const expectedStrategy = DEPOSIT_AMOUNT - expectedBuffer;
+
+            expect(await mockUSDC.balanceOf(vault.target)).to.equal(expectedBuffer);
+            expect(await mockUSDC.balanceOf(mockStrategy.target)).to.equal(expectedStrategy);
         });
 
         it("Should mint correct shares (1:1 for first deposit)", async function () {
@@ -168,8 +171,13 @@ describe("OmniYieldVault", function () {
             expect(await vault.balanceOf(user1.address)).to.equal(amount1);
             expect(await vault.balanceOf(user2.address)).to.equal(amount2);
 
-            // Strategy should hold all assets
-            expect(await mockUSDC.balanceOf(mockStrategy.target)).to.equal(amount1 + amount2);
+            // 10% of total funds in vault, 90% in strategy
+            const totalAssets = amount1 + amount2;
+            const expectedBuffer = (totalAssets * 1000n) / 10000n;
+            const expectedStrategy = totalAssets - expectedBuffer;
+
+            expect(await mockUSDC.balanceOf(vault.target)).to.equal(expectedBuffer);
+            expect(await mockUSDC.balanceOf(mockStrategy.target)).to.equal(expectedStrategy);
         });
 
         it("Should report correct totalAssets after deposits", async function () {
@@ -213,7 +221,12 @@ describe("OmniYieldVault", function () {
 
             await vault.withdraw(halfAmount, owner.address, owner.address);
 
-            // Remaining should still be in strategy
+            // The withdrawal of 500 should come from the buffer first (which is 100), 
+            // and the rest (400) from the strategy.
+            // Remaining balance = 500. New buffer target = 50.
+            // But since withdraw doesn't rebalance upwards immediately, the strategy holds 500
+            // and the vault holds 0.
+            expect(await mockUSDC.balanceOf(vault.target)).to.equal(0n);
             expect(await mockUSDC.balanceOf(mockStrategy.target)).to.equal(halfAmount);
         });
 
@@ -287,8 +300,16 @@ describe("OmniYieldVault", function () {
 
             // 85% of 100 = 85 re-invested 
             const expectedReinvested = YIELD_AMOUNT - (YIELD_AMOUNT * 1500n / 10000n);
-            // Total in strategy should be original + reinvested
-            expect(await vault.totalAssets()).to.equal(DEPOSIT_AMOUNT + expectedReinvested);
+
+            // Total in strategy should be original (900) + reinvested + excess buffer swept
+            // Since vault now has 1085 total assets, buffer target is 108.5
+            // So strategy holds 1085 - 108.5 = 976.5
+            const totalAssets = DEPOSIT_AMOUNT + expectedReinvested;
+            const expectedBuffer = (totalAssets * 1000n) / 10000n;
+            expect(await mockUSDC.balanceOf(vault.target)).to.equal(expectedBuffer);
+            expect(await mockUSDC.balanceOf(mockStrategy.target)).to.equal(totalAssets - expectedBuffer);
+
+            expect(await vault.totalAssets()).to.equal(totalAssets);
         });
 
         it("Should emit FeeCollected event", async function () {

@@ -26,7 +26,8 @@ import type {
 export interface OmniYieldVaultInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "FEE_DENOMINATOR"
+      | "DENOMINATOR"
+      | "MAX_BUFFER_BPS"
       | "MAX_FEE_BPS"
       | "allowance"
       | "approve"
@@ -37,9 +38,11 @@ export interface OmniYieldVaultInterface extends Interface {
       | "convertToShares"
       | "decimals"
       | "deposit"
+      | "depositWithReferral"
       | "feeRecipient"
       | "harvest"
       | "lastHarvestTimestamp"
+      | "liquidityBufferBps"
       | "maxDeposit"
       | "maxMint"
       | "maxRedeem"
@@ -54,8 +57,11 @@ export interface OmniYieldVaultInterface extends Interface {
       | "previewRedeem"
       | "previewWithdraw"
       | "redeem"
+      | "referrerPoints"
+      | "referrers"
       | "renounceOwnership"
       | "setFeeRecipient"
+      | "setLiquidityBufferBps"
       | "setPerformanceFeeBps"
       | "setStrategy"
       | "strategy"
@@ -77,15 +83,22 @@ export interface OmniYieldVaultInterface extends Interface {
       | "FeeCollected"
       | "FeeRecipientUpdated"
       | "Harvested"
+      | "LiquidityBufferUpdated"
       | "OwnershipTransferred"
       | "PerformanceFeeUpdated"
+      | "ReferralPointsAwarded"
+      | "ReferralRecorded"
       | "StrategyUpdated"
       | "Transfer"
       | "Withdraw"
   ): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "FEE_DENOMINATOR",
+    functionFragment: "DENOMINATOR",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MAX_BUFFER_BPS",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -120,12 +133,20 @@ export interface OmniYieldVaultInterface extends Interface {
     values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "depositWithReferral",
+    values: [BigNumberish, AddressLike, AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "feeRecipient",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "harvest", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "lastHarvestTimestamp",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "liquidityBufferBps",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -179,12 +200,24 @@ export interface OmniYieldVaultInterface extends Interface {
     values: [BigNumberish, AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "referrerPoints",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "referrers",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "setFeeRecipient",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLiquidityBufferBps",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setPerformanceFeeBps",
@@ -230,7 +263,11 @@ export interface OmniYieldVaultInterface extends Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "FEE_DENOMINATOR",
+    functionFragment: "DENOMINATOR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MAX_BUFFER_BPS",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -253,12 +290,20 @@ export interface OmniYieldVaultInterface extends Interface {
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "depositWithReferral",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "feeRecipient",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lastHarvestTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "liquidityBufferBps",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
@@ -294,11 +339,20 @@ export interface OmniYieldVaultInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "referrerPoints",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "referrers", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setFeeRecipient",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setLiquidityBufferBps",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -429,6 +483,22 @@ export namespace HarvestedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace LiquidityBufferUpdatedEvent {
+  export type InputTuple = [
+    oldBufferBps: BigNumberish,
+    newBufferBps: BigNumberish
+  ];
+  export type OutputTuple = [oldBufferBps: bigint, newBufferBps: bigint];
+  export interface OutputObject {
+    oldBufferBps: bigint;
+    newBufferBps: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace OwnershipTransferredEvent {
   export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
   export type OutputTuple = [previousOwner: string, newOwner: string];
@@ -448,6 +518,32 @@ export namespace PerformanceFeeUpdatedEvent {
   export interface OutputObject {
     oldFeeBps: bigint;
     newFeeBps: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace ReferralPointsAwardedEvent {
+  export type InputTuple = [referrer: AddressLike, points: BigNumberish];
+  export type OutputTuple = [referrer: string, points: bigint];
+  export interface OutputObject {
+    referrer: string;
+    points: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace ReferralRecordedEvent {
+  export type InputTuple = [user: AddressLike, referrer: AddressLike];
+  export type OutputTuple = [user: string, referrer: string];
+  export interface OutputObject {
+    user: string;
+    referrer: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -557,7 +653,9 @@ export interface OmniYieldVault extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  FEE_DENOMINATOR: TypedContractMethod<[], [bigint], "view">;
+  DENOMINATOR: TypedContractMethod<[], [bigint], "view">;
+
+  MAX_BUFFER_BPS: TypedContractMethod<[], [bigint], "view">;
 
   MAX_FEE_BPS: TypedContractMethod<[], [bigint], "view">;
 
@@ -599,11 +697,19 @@ export interface OmniYieldVault extends BaseContract {
     "nonpayable"
   >;
 
+  depositWithReferral: TypedContractMethod<
+    [assets: BigNumberish, receiver: AddressLike, referrer: AddressLike],
+    [bigint],
+    "nonpayable"
+  >;
+
   feeRecipient: TypedContractMethod<[], [string], "view">;
 
   harvest: TypedContractMethod<[], [bigint], "nonpayable">;
 
   lastHarvestTimestamp: TypedContractMethod<[], [bigint], "view">;
+
+  liquidityBufferBps: TypedContractMethod<[], [bigint], "view">;
 
   maxDeposit: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
@@ -645,10 +751,20 @@ export interface OmniYieldVault extends BaseContract {
     "nonpayable"
   >;
 
+  referrerPoints: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
+  referrers: TypedContractMethod<[arg0: AddressLike], [string], "view">;
+
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   setFeeRecipient: TypedContractMethod<
     [newRecipient: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setLiquidityBufferBps: TypedContractMethod<
+    [newBufferBps: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -706,7 +822,10 @@ export interface OmniYieldVault extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "FEE_DENOMINATOR"
+    nameOrSignature: "DENOMINATOR"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "MAX_BUFFER_BPS"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "MAX_FEE_BPS"
@@ -751,6 +870,13 @@ export interface OmniYieldVault extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "depositWithReferral"
+  ): TypedContractMethod<
+    [assets: BigNumberish, receiver: AddressLike, referrer: AddressLike],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "feeRecipient"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -758,6 +884,9 @@ export interface OmniYieldVault extends BaseContract {
   ): TypedContractMethod<[], [bigint], "nonpayable">;
   getFunction(
     nameOrSignature: "lastHarvestTimestamp"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "liquidityBufferBps"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "maxDeposit"
@@ -810,11 +939,20 @@ export interface OmniYieldVault extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "referrerPoints"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "referrers"
+  ): TypedContractMethod<[arg0: AddressLike], [string], "view">;
+  getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setFeeRecipient"
   ): TypedContractMethod<[newRecipient: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setLiquidityBufferBps"
+  ): TypedContractMethod<[newBufferBps: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setPerformanceFeeBps"
   ): TypedContractMethod<[newFeeBps: BigNumberish], [void], "nonpayable">;
@@ -900,6 +1038,13 @@ export interface OmniYieldVault extends BaseContract {
     HarvestedEvent.OutputObject
   >;
   getEvent(
+    key: "LiquidityBufferUpdated"
+  ): TypedContractEvent<
+    LiquidityBufferUpdatedEvent.InputTuple,
+    LiquidityBufferUpdatedEvent.OutputTuple,
+    LiquidityBufferUpdatedEvent.OutputObject
+  >;
+  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
@@ -912,6 +1057,20 @@ export interface OmniYieldVault extends BaseContract {
     PerformanceFeeUpdatedEvent.InputTuple,
     PerformanceFeeUpdatedEvent.OutputTuple,
     PerformanceFeeUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "ReferralPointsAwarded"
+  ): TypedContractEvent<
+    ReferralPointsAwardedEvent.InputTuple,
+    ReferralPointsAwardedEvent.OutputTuple,
+    ReferralPointsAwardedEvent.OutputObject
+  >;
+  getEvent(
+    key: "ReferralRecorded"
+  ): TypedContractEvent<
+    ReferralRecordedEvent.InputTuple,
+    ReferralRecordedEvent.OutputTuple,
+    ReferralRecordedEvent.OutputObject
   >;
   getEvent(
     key: "StrategyUpdated"
@@ -991,6 +1150,17 @@ export interface OmniYieldVault extends BaseContract {
       HarvestedEvent.OutputObject
     >;
 
+    "LiquidityBufferUpdated(uint256,uint256)": TypedContractEvent<
+      LiquidityBufferUpdatedEvent.InputTuple,
+      LiquidityBufferUpdatedEvent.OutputTuple,
+      LiquidityBufferUpdatedEvent.OutputObject
+    >;
+    LiquidityBufferUpdated: TypedContractEvent<
+      LiquidityBufferUpdatedEvent.InputTuple,
+      LiquidityBufferUpdatedEvent.OutputTuple,
+      LiquidityBufferUpdatedEvent.OutputObject
+    >;
+
     "OwnershipTransferred(address,address)": TypedContractEvent<
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,
@@ -1011,6 +1181,28 @@ export interface OmniYieldVault extends BaseContract {
       PerformanceFeeUpdatedEvent.InputTuple,
       PerformanceFeeUpdatedEvent.OutputTuple,
       PerformanceFeeUpdatedEvent.OutputObject
+    >;
+
+    "ReferralPointsAwarded(address,uint256)": TypedContractEvent<
+      ReferralPointsAwardedEvent.InputTuple,
+      ReferralPointsAwardedEvent.OutputTuple,
+      ReferralPointsAwardedEvent.OutputObject
+    >;
+    ReferralPointsAwarded: TypedContractEvent<
+      ReferralPointsAwardedEvent.InputTuple,
+      ReferralPointsAwardedEvent.OutputTuple,
+      ReferralPointsAwardedEvent.OutputObject
+    >;
+
+    "ReferralRecorded(address,address)": TypedContractEvent<
+      ReferralRecordedEvent.InputTuple,
+      ReferralRecordedEvent.OutputTuple,
+      ReferralRecordedEvent.OutputObject
+    >;
+    ReferralRecorded: TypedContractEvent<
+      ReferralRecordedEvent.InputTuple,
+      ReferralRecordedEvent.OutputTuple,
+      ReferralRecordedEvent.OutputObject
     >;
 
     "StrategyUpdated(address,address)": TypedContractEvent<

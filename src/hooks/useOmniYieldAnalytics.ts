@@ -38,7 +38,7 @@ export function useOmniYieldAnalytics() {
     return useQuery<OmniAnalyticsData>({
         queryKey: ["omni-analytics"],
         queryFn: async () => {
-            const res = await fetch("/api/omni-analytics");
+            const res = await fetch("/api/analytics-data");
             if (!res.ok) throw new Error("Analytics fetch failed");
             const raw = await res.json();
 

@@ -17,22 +17,30 @@ import "./interfaces/IStrategy.sol";
  * - Configurable performance fee (default 15%, capped at 30%)
  * - Fee recipient address (intended for a Gnosis Safe multisig)
  * - Callable by anyone (keeper/bot pattern for auto-compounding)
+ * - 10% Liquidity Buffer to ensure instant withdrawals
+ * - Gamified Referral System with point tracking
  */
 contract OmniYieldVault is ERC4626, Ownable {
     using SafeERC20 for IERC20;
 
     IStrategy public strategy;
     
-    // --- Fee Configuration ---
+    // --- Fee & Buffer Configuration ---
     address public feeRecipient;
     uint256 public performanceFeeBps; // in basis points (100 = 1%)
+    uint256 public liquidityBufferBps; // in basis points (default 1000 = 10%)
     uint256 public constant MAX_FEE_BPS = 3000; // 30% cap
-    uint256 public constant FEE_DENOMINATOR = 10000;
+    uint256 public constant MAX_BUFFER_BPS = 5000; // 50% cap
+    uint256 public constant DENOMINATOR = 10000;
 
     // --- Harvest Tracking ---
     uint256 public lastHarvestTimestamp;
     uint256 public totalHarvestedProfit;
     uint256 public totalFeesCollected;
+
+    // --- Referral System ---
+    mapping(address => address) public referrers; // user => referrer
+    mapping(address => uint256) public referrerPoints; // referrer => total points
 
     // --- Events ---
     event StrategyUpdated(address indexed oldStrategy, address indexed newStrategy);
@@ -40,6 +48,9 @@ contract OmniYieldVault is ERC4626, Ownable {
     event FeeCollected(address indexed recipient, uint256 amount);
     event FeeRecipientUpdated(address indexed oldRecipient, address indexed newRecipient);
     event PerformanceFeeUpdated(uint256 oldFeeBps, uint256 newFeeBps);
+    event LiquidityBufferUpdated(uint256 oldBufferBps, uint256 newBufferBps);
+    event ReferralRecorded(address indexed user, address indexed referrer);
+    event ReferralPointsAwarded(address indexed referrer, uint256 points);
 
     constructor(
         IERC20 asset_, 
@@ -61,6 +72,7 @@ contract OmniYieldVault is ERC4626, Ownable {
         strategy = strategy_;
         feeRecipient = feeRecipient_;
         performanceFeeBps = performanceFeeBps_;
+        liquidityBufferBps = 1000; // Default 10% liquidity buffer
         
         // Approve strategy to spend asset
         IERC20(asset_).approve(address(strategy_), type(uint256).max);
@@ -89,7 +101,7 @@ contract OmniYieldVault is ERC4626, Ownable {
 
         // Calculate and distribute fee
         if (performanceFeeBps > 0 && feeRecipient != address(0)) {
-            fee = (profit * performanceFeeBps) / FEE_DENOMINATOR;
+            fee = (profit * performanceFeeBps) / DENOMINATOR;
             if (fee > 0) {
                 IERC20(asset()).safeTransfer(feeRecipient, fee);
                 totalFeesCollected += fee;
@@ -98,9 +110,9 @@ contract OmniYieldVault is ERC4626, Ownable {
             reinvested = profit - fee;
         }
 
-        // Re-invest remaining profit into strategy
+        // Re-invest remaining profit while respecting the buffer
         if (reinvested > 0) {
-            strategy.invest(reinvested);
+            _investKeepingBuffer();
         }
 
         totalHarvestedProfit += profit;
@@ -114,11 +126,8 @@ contract OmniYieldVault is ERC4626, Ownable {
      * Convenience function combining idle sweep and harvest.
      */
     function compound() external returns (uint256 profit) {
-        // First, sweep any idle assets into strategy
-        uint256 idle = IERC20(asset()).balanceOf(address(this));
-        if (idle > 0) {
-            strategy.invest(idle);
-        }
+        // First, sweep any idle assets that exceed our buffer
+        _investKeepingBuffer();
 
         // Then harvest
         profit = strategy.harvest();
@@ -128,7 +137,7 @@ contract OmniYieldVault is ERC4626, Ownable {
             uint256 reinvested = profit;
 
             if (performanceFeeBps > 0 && feeRecipient != address(0)) {
-                fee = (profit * performanceFeeBps) / FEE_DENOMINATOR;
+                fee = (profit * performanceFeeBps) / DENOMINATOR;
                 if (fee > 0) {
                     IERC20(asset()).safeTransfer(feeRecipient, fee);
                     totalFeesCollected += fee;
@@ -138,7 +147,7 @@ contract OmniYieldVault is ERC4626, Ownable {
             }
 
             if (reinvested > 0) {
-                strategy.invest(reinvested);
+                 _investKeepingBuffer();
             }
 
             totalHarvestedProfit += profit;
@@ -146,6 +155,30 @@ contract OmniYieldVault is ERC4626, Ownable {
         }
 
         lastHarvestTimestamp = block.timestamp;
+    }
+
+    // ═══════════════════════════════════════════
+    //              REFERRALS
+    // ═══════════════════════════════════════════
+
+    /**
+     * @dev Deposit assets and record the referrer. 1 point is awarded to 
+     * the referrer for every 1 base unit of asset deposited via their link.
+     */
+    function depositWithReferral(uint256 assets, address receiver, address referrer) external returns (uint256 shares) {
+        require(referrer != msg.sender, "Cannot refer yourself");
+        require(referrer != address(0), "Invalid referrer");
+        
+        if (referrers[receiver] == address(0)) {
+            referrers[receiver] = referrer;
+            emit ReferralRecorded(receiver, referrer);
+        }
+
+        shares = deposit(assets, receiver);
+
+        // Award points based on asset decimals. For USDC (6 dec), 1e6 = 1,000,000 points.
+        referrerPoints[referrers[receiver]] += assets;
+        emit ReferralPointsAwarded(referrers[receiver], assets);
     }
 
     // ═══════════════════════════════════════════
@@ -192,6 +225,16 @@ contract OmniYieldVault is ERC4626, Ownable {
         emit PerformanceFeeUpdated(old, newFeeBps);
     }
 
+    /**
+     * @dev Updates the liquidity buffer target. Only callable by owner.
+     */
+    function setLiquidityBufferBps(uint256 newBufferBps) external onlyOwner {
+        require(newBufferBps <= MAX_BUFFER_BPS, "Buffer too high");
+        uint256 old = liquidityBufferBps;
+        liquidityBufferBps = newBufferBps;
+        emit LiquidityBufferUpdated(old, newBufferBps);
+    }
+
     // ═══════════════════════════════════════════
     //              VIEW FUNCTIONS
     // ═══════════════════════════════════════════
@@ -209,7 +252,7 @@ contract OmniYieldVault is ERC4626, Ownable {
      * @return netApyBps The net APY after performance fee deduction.
      */
     function netApy(uint256 grossApyBps) external view returns (uint256 netApyBps) {
-        netApyBps = grossApyBps - ((grossApyBps * performanceFeeBps) / FEE_DENOMINATOR);
+        netApyBps = grossApyBps - ((grossApyBps * performanceFeeBps) / DENOMINATOR);
     }
 
     // ═══════════════════════════════════════════
@@ -219,10 +262,10 @@ contract OmniYieldVault is ERC4626, Ownable {
     /** @dev Internal deposit: supplies assets to the active strategy. */
     function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal override {
         super._deposit(caller, receiver, assets, shares);
-        strategy.invest(assets);
+        _investKeepingBuffer();
     }
 
-    /** @dev Internal withdraw: withdraws assets from the active strategy. */
+    /** @dev Internal withdraw: withdraws assets from the active strategy if buffer is insufficient. */
     function _withdraw(address caller, address receiver, address _owner, uint256 assets, uint256 shares) internal override {
         uint256 vaultBalance = IERC20(asset()).balanceOf(address(this));
         if (assets > vaultBalance) {
@@ -231,5 +274,22 @@ contract OmniYieldVault is ERC4626, Ownable {
         }
         
         super._withdraw(caller, receiver, _owner, assets, shares);
+    }
+
+    /**
+     * @dev Enforces the liquidity buffer rule. Invests any excess assets sitting idle
+     * beyond the target liquidityBufferBps.
+     */
+    function _investKeepingBuffer() internal {
+        uint256 total = totalAssets();
+        if (total == 0) return;
+
+        uint256 targetBuffer = (total * liquidityBufferBps) / DENOMINATOR;
+        uint256 currentBalance = IERC20(asset()).balanceOf(address(this));
+
+        if (currentBalance > targetBuffer) {
+            uint256 toInvest = currentBalance - targetBuffer;
+            strategy.invest(toInvest);
+        }
     }
 }

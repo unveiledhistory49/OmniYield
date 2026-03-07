@@ -7,6 +7,7 @@
 *Maximize yield across Base & Solana with auto-compounding ERC-4626 vaults, gasless deposits, and transparent fee management.*
 
 [![Live Demo](https://img.shields.io/badge/🔗_Live_Demo-omniyield.vercel.app-7c3aed?style=for-the-badge)](https://omniyield.vercel.app)
+[![Security Report](https://img.shields.io/badge/Security-Slither_Analyzed-ff4b4b?style=for-the-badge)](./security_report.md)
 [![Tests](https://img.shields.io/badge/Tests-37%2F37_Passing-00ff88?style=for-the-badge)](#test-suite)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.20-363636?style=for-the-badge&logo=solidity)](https://soliditylang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js)](https://nextjs.org/)

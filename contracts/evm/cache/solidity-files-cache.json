@@ -38,8 +38,8 @@
       ]
     },
     "C:\\Users\\USER\\Desktop\\Projects\\OmniYield\\contracts\\evm\\contracts\\OmniYieldVault.sol": {
-      "lastModificationDate": 1772589809088,
-      "contentHash": "9279796ea8cabf85ce46d3a9a50261e7",
+      "lastModificationDate": 1772899170780,
+      "contentHash": "232226b5541becce3b71f2f15142d102",
       "sourceName": "contracts/OmniYieldVault.sol",
       "solcConfig": {
         "version": "0.8.20",
