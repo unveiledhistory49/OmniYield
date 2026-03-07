@@ -89,9 +89,9 @@ export default function PortfolioPage() {
             <p className="mb-2" style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
                 Your real-time positions across OmniYield vaults.
             </p>
-            {isLoading && <p className="text-xs text-cyan-400 mb-6 animate-pulse">Syncing on-chain data...</p>}
+            {isLoading && <p className="text-xs text-neutral-400 mb-6 animate-pulse">Syncing on-chain data...</p>}
             {!isLoading && (
-                <p className="text-xs text-green-400 mb-6">
+                <p className="text-xs text-neutral-400 mb-6">
                     ● Live On-Chain Data — Reading from Base Sepolia
                 </p>
             )}
@@ -108,13 +108,13 @@ export default function PortfolioPage() {
                     {
                         label: "Current Value",
                         value: formatCurrency(stats.currentValue),
-                        color: "var(--cyan)",
+                        color: "var(--text-primary)",
                         icon: DollarSign,
                     },
                     {
                         label: "Yield Harvested",
                         value: `+${formatCurrency(stats.totalHarvested)}`,
-                        color: "var(--green)",
+                        color: "var(--text-primary)",
                         icon: TrendingUp,
                     },
                     {
@@ -149,8 +149,8 @@ export default function PortfolioPage() {
                     <AreaChart data={portfolioHistory}>
                         <defs>
                             <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.3} />
-                                <stop offset="100%" stopColor="#7c3aed" stopOpacity={0} />
+                                <stop offset="0%" stopColor="#86868b" stopOpacity={0.2} />
+                                <stop offset="100%" stopColor="#86868b" stopOpacity={0} />
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
@@ -178,7 +178,7 @@ export default function PortfolioPage() {
                         <Area
                             type="monotone"
                             dataKey="value"
-                            stroke="#7c3aed"
+                            stroke="#86868b"
                             strokeWidth={2}
                             fill="url(#portfolioGradient)"
                         />
@@ -226,9 +226,9 @@ export default function PortfolioPage() {
                                             </span>
                                         </td>
                                         <td>{formatCurrency(pos.deposited)}</td>
-                                        <td style={{ color: "var(--cyan)" }}>{formatCurrency(pos.currentValue)}</td>
-                                        <td style={{ color: "var(--green)" }}>+{formatCurrency(pos.yieldEarned)}</td>
-                                        <td style={{ color: "var(--green)" }}>{formatAPY(pos.apy)}</td>
+                                        <td style={{ color: "var(--text-primary)" }}>{formatCurrency(pos.currentValue)}</td>
+                                        <td style={{ color: "var(--text-primary)" }}>+{formatCurrency(pos.yieldEarned)}</td>
+                                        <td style={{ color: "var(--text-primary)" }}>{formatAPY(pos.apy)}</td>
                                     </motion.tr>
                                 ))}
                             </tbody>

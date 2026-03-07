@@ -243,7 +243,7 @@ export default function VaultDetailPage() {
                             </div>
                             <div className="flex justify-between">
                                 <span style={{ color: "var(--text-secondary)" }}>Gross APY</span>
-                                <span className="font-medium" style={{ color: "var(--green)" }}>{vault ? `${vault.apy.toFixed(2)}%` : "—"}</span>
+                                <span className="font-medium" style={{ color: "var(--text-primary)" }}>{vault ? `${vault.apy.toFixed(2)}%` : "—"}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span style={{ color: "var(--text-secondary)" }}>Your Net APY</span>
@@ -265,13 +265,13 @@ export default function VaultDetailPage() {
                     {/* Harvest Card */}
                     <div className="glass-card p-4 md:p-5" style={{ background: "var(--bg-card)" }}>
                         <div className="flex items-center gap-2 mb-3">
-                            <TrendingUp size={16} style={{ color: "var(--green)" }} />
+                            <TrendingUp size={16} style={{ color: "var(--text-secondary)" }} />
                             <span className="font-semibold text-sm">Auto-Compound</span>
                         </div>
                         <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                                 <span style={{ color: "var(--text-secondary)" }}>Total Harvested</span>
-                                <span className="font-medium" style={{ color: "var(--green)" }}>
+                                <span className="font-medium" style={{ color: "var(--text-primary)" }}>
                                     {omniData?.totalHarvestedProfit
                                         ? `+${parseFloat(formatUnits(omniData.totalHarvestedProfit as bigint, SEPOLIA_USDC_DECIMALS)).toFixed(2)} USDC`
                                         : "0.00 USDC"}
@@ -297,7 +297,7 @@ export default function VaultDetailPage() {
                         <button
                             onClick={() => omniActions.harvest()}
                             className="w-full mt-3 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-90 cursor-pointer"
-                            style={{ background: "rgba(0, 255, 136, 0.15)", color: "var(--green)", border: "1px solid rgba(0, 255, 136, 0.3)" }}
+                            style={{ background: "rgba(255, 255, 255, 0.06)", color: "var(--text-primary)", border: "1px solid rgba(255, 255, 255, 0.1)" }}
                         >
                             ⚡ Harvest Now
                         </button>
@@ -311,7 +311,7 @@ export default function VaultDetailPage() {
                     {
                         label: "Current APY",
                         value: formatAPY(vault.apy),
-                        color: "var(--green)",
+                        color: "var(--text-primary)",
                         icon: TrendingUp,
                     },
                     {
@@ -417,8 +417,8 @@ export default function VaultDetailPage() {
                             <AreaChart data={tvlChartData}>
                                 <defs>
                                     <linearGradient id="tvlGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stopColor="#00d4ff" stopOpacity={0.3} />
-                                        <stop offset="100%" stopColor="#00d4ff" stopOpacity={0} />
+                                        <stop offset="0%" stopColor="#86868b" stopOpacity={0.2} />
+                                        <stop offset="100%" stopColor="#86868b" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
@@ -449,7 +449,7 @@ export default function VaultDetailPage() {
                                 <Area
                                     type="monotone"
                                     dataKey="value"
-                                    stroke="#00d4ff"
+                                    stroke="#86868b"
                                     strokeWidth={2}
                                     fill="url(#tvlGradient)"
                                 />
@@ -552,7 +552,7 @@ export default function VaultDetailPage() {
                                 <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                                     Estimated APY
                                 </span>
-                                <span className="text-sm font-medium" style={{ color: "var(--green)" }}>
+                                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
                                     {formatAPY(vault.apy)}
                                 </span>
                             </div>
@@ -560,7 +560,7 @@ export default function VaultDetailPage() {
                                 <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                                     Est. Yearly Earnings
                                 </span>
-                                <span className="text-sm font-medium" style={{ color: "var(--green)" }}>
+                                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
                                     ${estimatedEarnings}
                                 </span>
                             </div>

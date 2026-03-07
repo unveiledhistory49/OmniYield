@@ -29,14 +29,14 @@ type TimeRange = "1M" | "3M" | "6M";
 type TabId = "overview" | "vaults" | "chains";
 
 const PIE_COLORS = [
-    "#00d4ff",
-    "#7c3aed",
-    "#00ff88",
-    "#fbbf24",
-    "#f97316",
-    "#ff4d6a",
-    "#06b6d4",
-    "#8b5cf6",
+    "#86868b",
+    "#48484a",
+    "#636366",
+    "#aeaeb2",
+    "#8e8e93",
+    "#d1d1d6",
+    "#3a3a3c",
+    "#636366",
 ];
 
 // Generate basic TVL history based on the live absolute total for the chart
@@ -174,20 +174,20 @@ export default function AnalyticsPage() {
                 <div>
                     {/* Stats Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-2">
-                        {isLoading && <p className="text-xs text-cyan-400 mb-2 col-span-full animate-pulse">Establishing secure RCP connections... Fetching block data...</p>}
+                        {isLoading && <p className="text-xs text-neutral-500 mb-2 col-span-full animate-pulse">Establishing secure RPC connections... Fetching block data...</p>}
                         {error && <p className="text-xs text-red-400 mb-2 col-span-full break-all">● Remote Read Error: {error.message}</p>}
                         {liveData && !isLoading && !error && (
-                            <p className="text-xs text-green-400 mb-2 col-span-full">
+                            <p className="text-xs text-neutral-400 mb-2 col-span-full">
                                 ● Connections Active — Last packet read: {new Date(liveData.lastUpdated).toLocaleTimeString()}
                             </p>
                         )}
                         {[
-                            { label: "Total TVL", value: formatCurrency(displayStats.totalTVL), color: "var(--cyan)", icon: DollarSign },
-                            { label: "Total Users", value: displayStats.userCount.toLocaleString(), color: "var(--purple)", icon: Users },
-                            { label: "Yield Distributed", value: formatCurrency(displayStats.yieldDist), color: "var(--green)", icon: TrendingUp },
-                            { label: "Avg APY", value: formatAPY(displayStats.avgAPY), color: "var(--green)", icon: Activity },
-                            { label: "Active Vaults", value: displayStats.vaultCount.toString(), color: "var(--cyan)", icon: BarChart3 },
-                            { label: "Chains", value: displayStats.chains.toString(), color: "var(--purple)", icon: Layers },
+                            { label: "Total TVL", value: formatCurrency(displayStats.totalTVL), color: "var(--text-primary)", icon: DollarSign },
+                            { label: "Total Users", value: displayStats.userCount.toLocaleString(), color: "var(--text-primary)", icon: Users },
+                            { label: "Yield Distributed", value: formatCurrency(displayStats.yieldDist), color: "var(--text-primary)", icon: TrendingUp },
+                            { label: "Avg APY", value: formatAPY(displayStats.avgAPY), color: "var(--text-primary)", icon: Activity },
+                            { label: "Active Vaults", value: displayStats.vaultCount.toString(), color: "var(--text-primary)", icon: BarChart3 },
+                            { label: "Chains", value: displayStats.chains.toString(), color: "var(--text-primary)", icon: Layers },
                         ].map((stat, i) => (
                             <motion.div
                                 key={stat.label}
@@ -217,9 +217,9 @@ export default function AnalyticsPage() {
                     {liveData && (
                         <div className="flex flex-wrap items-center gap-3 md:gap-6 mb-6 md:mb-8 text-xs font-mono p-3 rounded-lg border" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg-card)' }}>
                             <span className="text-muted">Live Price Ticker</span>
-                            <span>SOL: <span className="text-cyan-400">${liveData.prices.SOL.toFixed(2)}</span> <span className={liveData.changes24h.SOL >= 0 ? "text-green-400" : "text-red-400"}>{liveData.changes24h.SOL > 0 ? "+" : ""}{liveData.changes24h.SOL.toFixed(2)}%</span></span>
-                            <span>JitoSOL: <span className="text-cyan-400">${liveData.prices.JitoSOL.toFixed(2)}</span></span>
-                            <span>USDC: <span className="text-cyan-400">${liveData.prices.USDC.toFixed(3)}</span></span>
+                            <span>SOL: <span className="text-neutral-300">${liveData.prices.SOL.toFixed(2)}</span> <span className={liveData.changes24h.SOL >= 0 ? "text-neutral-300" : "text-red-400"}>{liveData.changes24h.SOL > 0 ? "+" : ""}{liveData.changes24h.SOL.toFixed(2)}%</span></span>
+                            <span>JitoSOL: <span className="text-neutral-300">${liveData.prices.JitoSOL.toFixed(2)}</span></span>
+                            <span>USDC: <span className="text-neutral-300">${liveData.prices.USDC.toFixed(3)}</span></span>
                         </div>
                     )}
 
@@ -235,7 +235,7 @@ export default function AnalyticsPage() {
                                         className="px-3 py-1 text-xs font-medium transition-colors cursor-pointer"
                                         style={{
                                             background: timeRange === t ? "var(--bg-elevated)" : "transparent",
-                                            color: timeRange === t ? "var(--cyan)" : "var(--text-tertiary)",
+                                            color: timeRange === t ? "var(--text-primary)" : "var(--text-tertiary)",
                                         }}
                                     >
                                         {t}
@@ -247,8 +247,8 @@ export default function AnalyticsPage() {
                             <AreaChart data={tvlData}>
                                 <defs>
                                     <linearGradient id="globalTvlGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stopColor="#00d4ff" stopOpacity={0.25} />
-                                        <stop offset="100%" stopColor="#00d4ff" stopOpacity={0} />
+                                        <stop offset="0%" stopColor="#86868b" stopOpacity={0.2} />
+                                        <stop offset="100%" stopColor="#86868b" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
@@ -265,10 +265,10 @@ export default function AnalyticsPage() {
                                 />
                                 <Tooltip
                                     contentStyle={{
-                                        background: "#1a1f36",
-                                        border: "1px solid rgba(255,255,255,0.1)",
-                                        borderRadius: "8px",
-                                        color: "#f0f2f7",
+                                        background: "#1a1a1a",
+                                        border: "1px solid rgba(255,255,255,0.08)",
+                                        borderRadius: "10px",
+                                        color: "#f5f5f7",
                                         fontSize: "13px",
                                     }}
                                     formatter={(value) => [formatCurrency(value as number), "TVL"]}
@@ -276,7 +276,7 @@ export default function AnalyticsPage() {
                                 <Area
                                     type="monotone"
                                     dataKey="value"
-                                    stroke="#00d4ff"
+                                    stroke="#86868b"
                                     strokeWidth={2}
                                     fill="url(#globalTvlGradient)"
                                 />
@@ -391,7 +391,7 @@ export default function AnalyticsPage() {
                             <tbody>
                                 {liveVaults.length === 0 && (
                                     <tr>
-                                        <td colSpan={7} className="text-center py-8 text-sm text-cyan-500 animate-pulse">Syncing nodes...</td>
+                                        <td colSpan={7} className="text-center py-8 text-sm text-neutral-500 animate-pulse">Syncing nodes...</td>
                                     </tr>
                                 )}
                                 {liveVaults.map((vault, i) => (
@@ -407,19 +407,19 @@ export default function AnalyticsPage() {
                                                 style={{
                                                     background:
                                                         i === 0
-                                                            ? "var(--green-glow)"
+                                                            ? "rgba(255,255,255,0.08)"
                                                             : i === 1
-                                                                ? "var(--cyan-glow)"
+                                                                ? "rgba(255,255,255,0.06)"
                                                                 : i === 2
-                                                                    ? "var(--purple-glow)"
+                                                                    ? "rgba(255,255,255,0.04)"
                                                                     : "var(--glass)",
                                                     color:
                                                         i === 0
-                                                            ? "var(--green)"
+                                                            ? "var(--text-primary)"
                                                             : i === 1
-                                                                ? "var(--cyan)"
+                                                                ? "var(--text-primary)"
                                                                 : i === 2
-                                                                    ? "var(--purple)"
+                                                                    ? "var(--text-secondary)"
                                                                     : "var(--text-tertiary)",
                                                 }}
                                             >
@@ -439,7 +439,7 @@ export default function AnalyticsPage() {
                                                 {vault.chain === "solana" ? "◎ Solana" : "Ⓑ Base"}
                                             </span>
                                         </td>
-                                        <td style={{ color: "var(--green)", fontWeight: 700 }}>
+                                        <td style={{ color: "var(--text-primary)", fontWeight: 700 }}>
                                             {formatAPY(vault.apy)}
                                         </td>
                                         <td style={{ color: "var(--text-secondary)" }}>
@@ -518,7 +518,7 @@ export default function AnalyticsPage() {
                                     <div
                                         className="text-lg font-bold"
                                         style={{
-                                            color: "var(--green)",
+                                            color: "var(--text-primary)",
                                             fontFamily: "var(--font-outfit, 'Outfit', sans-serif)",
                                         }}
                                     >
@@ -545,7 +545,7 @@ export default function AnalyticsPage() {
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-sm font-bold" style={{ color: "var(--green)" }}>
+                                            <div className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
                                                 {formatAPY(vault.apy)}
                                             </div>
                                             <div className="text-xs" style={{ color: "var(--text-secondary)" }}>
@@ -555,7 +555,7 @@ export default function AnalyticsPage() {
                                     </div>
                                 ))}
                                 {group.vaults.length === 0 && (
-                                    <p className="text-xs text-center py-4 text-cyan-600">Pending initial deploy...</p>
+                                    <p className="text-xs text-center py-4 text-neutral-600">Pending initial deploy...</p>
                                 )}
                             </div>
                         </div>

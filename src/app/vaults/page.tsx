@@ -77,9 +77,9 @@ export default function VaultsPage() {
                     </h1>
                     <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
                         Explore {activeVaults.length} yield-bearing vaults across chains
-                        {isLoading && <span className="text-cyan-400 ml-2 animate-pulse">● Syncing...</span>}
+                        {isLoading && <span className="text-neutral-500 ml-2 animate-pulse">● Syncing...</span>}
                         {error && <span className="text-red-400 ml-2">● Data Error: {error.message}</span>}
-                        {!isLoading && !error && <span className="text-green-400 ml-2">● Live Rates Active</span>}
+                        {!isLoading && !error && <span className="text-neutral-400 ml-2">● Live Rates Active</span>}
                     </p>
                 </div>
 
@@ -210,7 +210,7 @@ export default function VaultsPage() {
                                         <td>
                                             <span
                                                 className="font-bold"
-                                                style={{ color: "var(--green)" }}
+                                                style={{ color: "var(--text-primary)" }}
                                             >
                                                 {formatAPY(vault.apy)}
                                             </span>
@@ -238,9 +238,9 @@ export default function VaultsPage() {
                                                 <button
                                                     className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer"
                                                     style={{
-                                                        background: "var(--glass)",
-                                                        border: "1px solid var(--border)",
-                                                        color: "var(--cyan)",
+                                                        background: "rgba(255, 255, 255, 0.06)",
+                                                        border: "1px solid var(--border-hover)",
+                                                        color: "var(--text-primary)",
                                                     }}
                                                 >
                                                     Deposit <ExternalLink size={12} />
@@ -291,7 +291,7 @@ export default function VaultsPage() {
                                         <div
                                             className="text-2xl font-bold"
                                             style={{
-                                                color: "var(--green)",
+                                                color: "var(--text-primary)",
                                                 fontFamily: "var(--font-outfit, 'Outfit', sans-serif)",
                                             }}
                                         >

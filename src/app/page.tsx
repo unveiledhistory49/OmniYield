@@ -32,7 +32,7 @@ function AnimatedCounter({ target, prefix = "$" }: { target: number; prefix?: st
   }, [target]);
 
   return (
-    <span className="gradient-text" style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)" }}>
+    <span style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)", color: "var(--text-primary)" }}>
       {prefix}{(current / 1_000_000_000).toFixed(2)}B
     </span>
   );
@@ -84,31 +84,7 @@ export default function HeroPage() {
           padding: "40px 16px 60px",
         }}
       >
-        {/* Glow orbs */}
-        <div
-          className="absolute hidden md:block"
-          style={{
-            width: "600px",
-            height: "600px",
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%)",
-            top: "-200px",
-            left: "10%",
-            filter: "blur(60px)",
-          }}
-        />
-        <div
-          className="absolute hidden md:block"
-          style={{
-            width: "500px",
-            height: "500px",
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(0,212,255,0.1) 0%, transparent 70%)",
-            bottom: "-100px",
-            right: "5%",
-            filter: "blur(60px)",
-          }}
-        />
+        {/* Clean background — no glow orbs */}
 
         {/* Badge */}
         <motion.div
@@ -117,9 +93,9 @@ export default function HeroPage() {
           transition={{ duration: 0.5 }}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-6 md:mb-8"
           style={{
-            background: "var(--cyan-glow)",
-            border: "1px solid rgba(0, 212, 255, 0.2)",
-            color: "var(--cyan)",
+            background: "rgba(255, 255, 255, 0.06)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            color: "var(--text-secondary)",
           }}
         >
           <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--green)" }} />
@@ -138,7 +114,7 @@ export default function HeroPage() {
           }}
         >
           Deposit once.{" "}
-          <span className="gradient-text">Earn everywhere.</span>
+          <span style={{ color: "var(--text-secondary)" }}>Earn everywhere.</span>
         </motion.h1>
 
         {/* Subtitle */}
@@ -183,7 +159,7 @@ export default function HeroPage() {
             <div
               className="text-3xl sm:text-4xl md:text-5xl font-bold"
               style={{
-                color: "var(--green)",
+                color: "var(--text-primary)",
                 fontFamily: "var(--font-outfit, 'Outfit', sans-serif)",
               }}
             >
@@ -235,10 +211,10 @@ export default function HeroPage() {
           {protocols.map((name) => (
             <span
               key={name}
-              className="text-xs md:text-sm font-medium px-3 py-1 rounded-full"
+              className="text-xs md:text-sm font-medium px-3 py-1.5 rounded-full"
               style={{
                 color: "var(--text-tertiary)",
-                background: "var(--glass)",
+                background: "rgba(255, 255, 255, 0.04)",
                 border: "1px solid var(--border)",
               }}
             >
@@ -258,7 +234,7 @@ export default function HeroPage() {
             className="text-2xl md:text-3xl font-bold text-center mb-4"
             style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)" }}
           >
-            Why <span className="gradient-text">OmniYield</span>?
+            Why <span style={{ color: "var(--text-secondary)" }}>OmniYield</span>?
           </h2>
           <p
             className="text-center text-sm md:text-base mb-10 md:mb-16"
@@ -280,8 +256,8 @@ export default function HeroPage() {
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center"
                   style={{
-                    background: "var(--cyan-glow)",
-                    color: "var(--cyan)",
+                    background: "rgba(255, 255, 255, 0.06)",
+                    color: "var(--text-secondary)",
                   }}
                 >
                   <feature.icon size={20} />

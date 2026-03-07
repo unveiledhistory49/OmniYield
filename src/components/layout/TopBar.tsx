@@ -53,8 +53,9 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
             style={{
                 left: isMobile ? "0" : "72px",
                 height: "var(--topbar-height)",
-                background: "rgba(10, 14, 26, 0.8)",
-                backdropFilter: "blur(16px)",
+                background: "rgba(0, 0, 0, 0.85)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
                 borderBottom: "1px solid var(--border)",
                 padding: isMobile ? "0 12px" : "0 24px",
             }}
@@ -63,16 +64,16 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
             <div className="flex items-center gap-2 shrink-0">
                 {isMobile && (
                     <div
-                        className="w-7 h-7 rounded-md flex items-center justify-center font-bold text-[10px] shrink-0"
-                        style={{ background: "var(--gradient-primary)", color: "#fff" }}
+                        className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-[10px] shrink-0"
+                        style={{ background: "var(--bg-elevated)", color: "var(--text-primary)" }}
                     >
                         OY
                     </div>
                 )}
                 {isMobile && (
                     <span
-                        className="font-bold text-sm gradient-text"
-                        style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)" }}
+                        className="font-bold text-sm"
+                        style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)", color: "var(--text-primary)" }}
                     >
                         OmniYield
                     </span>
@@ -114,10 +115,10 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
                         <>
                             <button
                                 onClick={() => setShowDropdown(!showDropdown)}
-                                className="flex items-center gap-1.5 px-4 py-2 rounded-lg font-medium text-sm cursor-pointer"
+                                className="flex items-center gap-1.5 px-4 py-2 rounded-full font-medium text-sm cursor-pointer"
                                 style={{
-                                    background: "var(--gradient-primary)",
-                                    color: "#fff",
+                                    background: "var(--text-primary)",
+                                    color: "#000000",
                                 }}
                             >
                                 <Wallet size={14} />
@@ -188,7 +189,7 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
                         <Bell size={18} />
                         <span
                             className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full"
-                            style={{ background: "var(--cyan)" }}
+                            style={{ background: "var(--accent)" }}
                         />
                     </button>
 
@@ -226,10 +227,10 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
                         <button
                             onClick={connect}
                             disabled={isConnecting}
-                            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 cursor-pointer"
+                            className="flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm transition-all duration-200 cursor-pointer"
                             style={{
-                                background: "var(--gradient-primary)",
-                                color: "#fff",
+                                background: "var(--text-primary)",
+                                color: "#000000",
                                 opacity: isConnecting ? 0.7 : 1,
                             }}
                         >

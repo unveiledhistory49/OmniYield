@@ -1,75 +1,82 @@
 @import "tailwindcss";
 
 /* ============================================
-   OmniYield Design System
-   Deep navy/purple dark mode with cyan/green accents
+   OmniYield Design System — Apple-esque Dark
+   Pure black canvas, white typography, minimal accent
    ============================================ */
 
 :root {
-  /* Background layers */
-  --bg-primary: #0a0e1a;
-  --bg-secondary: #0f1424;
-  --bg-tertiary: #151b30;
-  --bg-card: #1a1f36;
-  --bg-card-hover: #1f2644;
-  --bg-elevated: #242b4a;
+  /* Backgrounds — pure black spectrum */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #111111;
+  --bg-card: #1a1a1a;
+  --bg-card-hover: #222222;
+  --bg-elevated: #2a2a2a;
 
-  /* Text */
-  --text-primary: #f0f2f7;
-  --text-secondary: #8b93b0;
-  --text-tertiary: #5a6280;
-  --text-muted: #3d4460;
+  /* Text — Apple SF-style hierarchy */
+  --text-primary: #f5f5f7;
+  --text-secondary: #86868b;
+  --text-tertiary: #48484a;
+  --text-muted: #333333;
 
-  /* Accent colors */
-  --cyan: #00d4ff;
-  --cyan-dim: #00a8cc;
-  --cyan-glow: rgba(0, 212, 255, 0.15);
-  --green: #00ff88;
-  --green-dim: #00cc6a;
-  --green-glow: rgba(0, 255, 136, 0.15);
-  --purple: #7c3aed;
-  --purple-dim: #6d28d9;
-  --purple-glow: rgba(124, 58, 237, 0.15);
-  --red: #ff4d6a;
-  --red-dim: #e0435d;
-  --red-glow: rgba(255, 77, 106, 0.12);
-  --yellow: #fbbf24;
-  --orange: #f97316;
+  /* Accent — Apple blue (used sparingly) */
+  --accent: #0A84FF;
+  --accent-dim: #0071e3;
+  --accent-glow: rgba(10, 132, 255, 0.12);
+
+  /* Semantic */
+  --green: #30D158;
+  --green-dim: #28a745;
+  --green-glow: rgba(48, 209, 88, 0.10);
+  --red: #FF453A;
+  --red-dim: #d63031;
+  --red-glow: rgba(255, 69, 58, 0.10);
+  --yellow: #FFD60A;
+  --orange: #FF9F0A;
+
+  /* Legacy alias for components still using --cyan */
+  --cyan: #0A84FF;
+  --cyan-dim: #0071e3;
+  --cyan-glow: rgba(10, 132, 255, 0.12);
+  --purple: #BF5AF2;
+  --purple-dim: #9945ff;
+  --purple-glow: rgba(191, 90, 242, 0.10);
 
   /* Chain colors */
   --solana: #9945ff;
-  --solana-glow: rgba(153, 69, 255, 0.15);
+  --solana-glow: rgba(153, 69, 255, 0.10);
   --base-chain: #0052ff;
-  --base-glow: rgba(0, 82, 255, 0.15);
+  --base-glow: rgba(0, 82, 255, 0.10);
 
-  /* Borders and surfaces */
+  /* Surfaces */
   --border: rgba(255, 255, 255, 0.06);
   --border-hover: rgba(255, 255, 255, 0.12);
   --glass: rgba(255, 255, 255, 0.04);
-  --glass-hover: rgba(255, 255, 255, 0.07);
+  --glass-hover: rgba(255, 255, 255, 0.06);
 
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
-  --gradient-green: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
-  --gradient-hero: linear-gradient(135deg, #0a0e1a 0%, #1a1040 50%, #0a0e1a 100%);
-  --gradient-card: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+  /* Gradients — minimal */
+  --gradient-primary: linear-gradient(135deg, #f5f5f7 0%, #86868b 100%);
+  --gradient-green: linear-gradient(135deg, #30D158 0%, #28a745 100%);
+  --gradient-hero: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+  --gradient-card: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 100%);
 
   /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-glow-cyan: 0 0 24px rgba(0, 212, 255, 0.2);
-  --shadow-glow-green: 0 0 24px rgba(0, 255, 136, 0.2);
-  --shadow-glow-purple: 0 0 24px rgba(124, 58, 237, 0.2);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.7);
+  --shadow-glow-cyan: 0 0 20px rgba(10, 132, 255, 0.15);
+  --shadow-glow-green: 0 0 20px rgba(48, 209, 88, 0.15);
+  --shadow-glow-purple: 0 0 20px rgba(191, 90, 242, 0.15);
 
-  /* Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
+  /* Radius — larger, softer */
+  --radius-sm: 8px;
+  --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
 
-  /* Sidebar */
+  /* Layout */
   --sidebar-width: 72px;
   --sidebar-width-expanded: 240px;
   --topbar-height: 64px;
@@ -83,7 +90,7 @@
 }
 
 /* ============================================
-   Base / Reset
+   Base
    ============================================ */
 * {
   box-sizing: border-box;
@@ -96,116 +103,115 @@ html {
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-inter, 'Inter', system-ui, -apple-system, sans-serif);
+  font-family: var(--font-inter, 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-outfit, 'Outfit', system-ui, sans-serif);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: var(--font-outfit, 'Outfit', -apple-system, system-ui, sans-serif);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
 }
 
 /* ============================================
-   Glassmorphism Card
+   Cards — clean frosted glass
    ============================================ */
 .glass-card {
-  background: var(--gradient-card);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  backdrop-filter: blur(12px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
 }
 
 .glass-card:hover {
   border-color: var(--border-hover);
-  background: var(--glass-hover);
-  box-shadow: var(--shadow-md);
+  background: var(--bg-card-hover);
 }
 
 /* ============================================
-   Gradient Text
+   Gradient Text — use sparingly
    ============================================ */
 .gradient-text {
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, #f5f5f7 0%, #86868b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-text-green {
-  background: var(--gradient-green);
+  background: linear-gradient(135deg, #30D158 0%, #28a745 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 /* ============================================
-   Buttons
+   Buttons — Apple-clean
    ============================================ */
 .btn-primary {
-  background: var(--gradient-primary);
-  color: white;
+  background: #f5f5f7;
+  color: #000000;
   font-weight: 600;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
   padding: 12px 28px;
   cursor: pointer;
-  transition: all 0.25s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-primary::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0);
-  transition: background 0.25s ease;
-}
-
-.btn-primary:hover::before {
-  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
 }
 
 .btn-primary:hover {
-  box-shadow: var(--shadow-glow-cyan);
-  transform: translateY(-1px);
+  background: #ffffff;
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
 }
 
 .btn-secondary {
-  background: var(--glass);
+  background: transparent;
   color: var(--text-primary);
   font-weight: 500;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 10px 24px;
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-full);
+  padding: 11px 24px;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 0.9rem;
 }
 
 .btn-secondary:hover {
-  background: var(--glass-hover);
-  border-color: var(--border-hover);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .btn-green {
-  background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
-  color: #0a0e1a;
-  font-weight: 700;
+  background: #f5f5f7;
+  color: #000000;
+  font-weight: 600;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
   padding: 14px 32px;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
   font-size: 1rem;
+  letter-spacing: -0.01em;
 }
 
 .btn-green:hover {
-  box-shadow: var(--shadow-glow-green);
-  transform: translateY(-1px);
+  background: #ffffff;
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
+}
+
+.btn-green:active {
+  transform: scale(0.98);
 }
 
 /* ============================================
@@ -216,29 +222,27 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 20px 24px;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .stat-card:hover {
   border-color: var(--border-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
 }
 
 .stat-card .stat-label {
   color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
 }
 
 .stat-card .stat-value {
   font-family: var(--font-outfit, 'Outfit', sans-serif);
   font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
 }
 
 /* ============================================
@@ -253,20 +257,19 @@ h1, h2, h3, h4, h5, h6 {
 .data-table thead th {
   color: var(--text-tertiary);
   font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-weight: 500;
+  letter-spacing: 0;
   padding: 12px 16px;
   text-align: left;
   border-bottom: 1px solid var(--border);
 }
 
 .data-table tbody tr {
-  transition: background 0.2s ease;
+  transition: background 0.15s ease;
 }
 
 .data-table tbody tr:hover {
-  background: var(--glass-hover);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .data-table tbody td {
@@ -288,12 +291,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* ============================================
@@ -302,7 +305,7 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -311,44 +314,35 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 12px rgba(0, 212, 255, 0.15);
-  }
-  50% {
-    box-shadow: 0 0 24px rgba(0, 212, 255, 0.3);
-  }
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
+  animation: fadeInUp 0.5s ease-out forwards;
 }
 
 .animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
+  animation: pulse-glow 2s ease-in-out infinite;
 }
 
 /* ============================================
-   Mesh gradient background
+   Mesh gradient — subtle
    ============================================ */
 .mesh-gradient {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background:
-    radial-gradient(ellipse at 20% 0%, rgba(124, 58, 237, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 0%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 100%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
-    var(--bg-primary);
+  background: #000000;
 }
 
 /* ============================================
-   Risk badge colors
+   Badges
    ============================================ */
 .risk-low {
   color: var(--green);
@@ -357,7 +351,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .risk-medium {
   color: var(--yellow);
-  background: rgba(251, 191, 36, 0.12);
+  background: rgba(255, 214, 10, 0.10);
 }
 
 .risk-high {
@@ -365,9 +359,6 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--red-glow);
 }
 
-/* ============================================
-   Chain badge
-   ============================================ */
 .chain-solana {
   color: var(--solana);
   background: var(--solana-glow);
@@ -380,11 +371,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .chain-sepolia {
   color: #627EEA;
-  background: rgba(98, 126, 234, 0.15);
+  background: rgba(98, 126, 234, 0.10);
 }
 
 /* ============================================
-   Table scroll wrapper for mobile
+   Table scroll
    ============================================ */
 .table-scroll-wrapper {
   overflow-x: auto;
@@ -393,7 +384,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   Mobile Responsive Overrides
+   Mobile Responsive
    ============================================ */
 @media (max-width: 768px) {
   :root {

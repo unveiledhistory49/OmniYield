@@ -54,7 +54,7 @@ export default function Sidebar() {
                 className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around"
                 style={{
                     height: "64px",
-                    background: "rgba(10, 14, 26, 0.92)",
+                    background: "rgba(0, 0, 0, 0.95)",
                     backdropFilter: "blur(20px)",
                     borderTop: "1px solid var(--border)",
                     paddingBottom: "env(safe-area-inset-bottom, 0px)",
@@ -78,7 +78,7 @@ export default function Sidebar() {
                                 <motion.div
                                     layoutId="mobile-tab-active"
                                     className="absolute -top-px left-2 right-2 h-[2px] rounded-b-full"
-                                    style={{ background: "var(--cyan)" }}
+                                    style={{ background: "var(--text-primary)" }}
                                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                                 />
                             )}
@@ -103,7 +103,7 @@ export default function Sidebar() {
         <motion.aside
             className="fixed left-0 top-0 h-screen z-50 flex flex-col"
             style={{
-                background: "var(--bg-secondary)",
+                background: "#000000",
                 borderRight: "1px solid var(--border)",
             }}
             animate={{ width: expanded ? 240 : 72 }}
@@ -117,8 +117,8 @@ export default function Sidebar() {
                 style={{ borderBottom: "1px solid var(--border)" }}
             >
                 <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm shrink-0"
-                    style={{ background: "var(--gradient-primary)", color: "#fff" }}
+                    className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
+                    style={{ background: "var(--bg-elevated)", color: "var(--text-primary)" }}
                 >
                     OY
                 </div>
@@ -129,8 +129,8 @@ export default function Sidebar() {
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -8 }}
                             transition={{ duration: 0.15 }}
-                            className="font-bold text-lg whitespace-nowrap gradient-text"
-                            style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)" }}
+                            className="font-bold text-lg whitespace-nowrap"
+                            style={{ fontFamily: "var(--font-outfit, 'Outfit', sans-serif)", color: "var(--text-primary)" }}
                         >
                             OmniYield
                         </motion.span>
@@ -150,15 +150,15 @@ export default function Sidebar() {
                             href={item.href}
                             className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative"
                             style={{
-                                background: isActive ? "var(--cyan-glow)" : "transparent",
-                                color: isActive ? "var(--cyan)" : "var(--text-secondary)",
+                                background: isActive ? "rgba(255, 255, 255, 0.06)" : "transparent",
+                                color: isActive ? "var(--text-primary)" : "var(--text-tertiary)",
                             }}
                         >
                             {isActive && (
                                 <motion.div
                                     layoutId="sidebar-active"
                                     className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full"
-                                    style={{ background: "var(--cyan)" }}
+                                    style={{ background: "var(--text-primary)" }}
                                     transition={{ type: "spring", stiffness: 350, damping: 30 }}
                                 />
                             )}
@@ -166,7 +166,7 @@ export default function Sidebar() {
                                 size={20}
                                 className="shrink-0"
                                 style={{
-                                    color: isActive ? "var(--cyan)" : undefined,
+                                    color: isActive ? "var(--text-primary)" : undefined,
                                 }}
                             />
                             <AnimatePresence>
