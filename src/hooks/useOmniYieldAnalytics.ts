@@ -30,6 +30,13 @@ export interface OmniAnalyticsData {
         aaveApy: number;
         aerodromeApy: number;
     };
+    aaveV3Health?: {
+        liveApy: number;
+        utilization: number;
+        totalLiquidity: string;
+        totalDebt: string;
+        timestamp: number;
+    };
     vaults: DefiLlamaPool[];
     lastUpdated: number;
 }
@@ -99,6 +106,7 @@ export function useOmniYieldAnalytics() {
                 prices,
                 changes24h,
                 strategies: { kaminoApy, aaveApy, aerodromeApy },
+                aaveV3Health: raw.data?.aaveV3Health,
                 vaults,
                 lastUpdated: Date.now()
             };

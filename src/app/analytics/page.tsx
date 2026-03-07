@@ -13,6 +13,8 @@ import {
     PieChart,
     Pie,
     Cell,
+    BarChart,
+    Bar,
 } from "recharts";
 import {
     TrendingUp,
@@ -57,6 +59,91 @@ const generateLiveTVLHistory = (currentTvl: number) => {
         });
     }
     return data;
+};
+
+const AaveHealth = ({ health }: { health: any }) => {
+    if (!health) return <div className="p-8 text-center opacity-50">Syncing Aave V3 Market Data...</div>;
+
+    const data = [
+        { name: 'Supply', value: Number(health.totalLiquidity) },
+        { name: 'Debt', value: Number(health.totalDebt) }
+    ];
+
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 glass-card p-6">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 className="text-lg font-semibold text-white">Aave V3 Market Health</h3>
+                        <p className="text-xs text-neutral-400">Live on-chain metrics from Base Sepolia</p>
+                    </div>
+                    <div className="text-right">
+                        <div className="text-2xl font-bold" style={{ color: 'var(--green)' }}>{health.liveApy.toFixed(2)}%</div>
+                        <div className="text-[10px] uppercase tracking-wider opacity-50">Current Supply APY</div>
+                    </div>
+                </div>
+
+                <div className="h-[200px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={[
+                            { name: 'Supply', val: Number(health.totalLiquidity), color: 'var(--green)' },
+                            { name: 'Debt', val: Number(health.totalDebt), color: '#333' }
+                        ]}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
+                            <XAxis dataKey="name" stroke="#666" fontSize={10} axisLine={false} tickLine={false} />
+                            <YAxis hide />
+                            <Tooltip
+                                cursor={{ fill: 'transparent' }}
+                                contentStyle={{ background: '#111', border: '1px solid #333', borderRadius: '8px' }}
+                                itemStyle={{ color: '#fff' }}
+                            />
+                            <Bar dataKey="val" radius={[4, 4, 0, 0]}>
+                                {
+                                    [
+                                        { fill: 'var(--green)' },
+                                        { fill: '#444' }
+                                    ].map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                                    ))
+                                }
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
+
+            <div className="glass-card p-6 flex flex-col justify-between">
+                <div>
+                    <h4 className="text-sm font-medium opacity-50 mb-1">Utilization Rate</h4>
+                    <div className="text-3xl font-bold text-white">{health.utilization.toFixed(1)}%</div>
+                </div>
+
+                <div className="space-y-4">
+                    <div className="flex justify-between text-xs">
+                        <span className="opacity-50">Total Supplied</span>
+                        <span>{formatCurrency(Number(health.totalLiquidity))}</span>
+                    </div>
+                    <div className="w-full bg-neutral-800 h-1.5 rounded-full overflow-hidden">
+                        <div
+                            className="bg-emerald-500 h-full transition-all duration-1000"
+                            style={{ width: `${health.utilization}%` }}
+                        />
+                    </div>
+                    <div className="flex justify-between text-xs">
+                        <span className="opacity-50">Total Borrowed</span>
+                        <span>{formatCurrency(Number(health.totalDebt))}</span>
+                    </div>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-white/5">
+                    <div className="flex items-center gap-2 text-[10px] text-emerald-400">
+                        <Activity size={10} />
+                        <span className="uppercase tracking-widest font-bold">Protocol Health: Optimal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default function AnalyticsPage() {
@@ -284,26 +371,9 @@ export default function AnalyticsPage() {
                         </ResponsiveContainer>
                     </div>
 
-                    {/* Dune Analytics Flex */}
-                    <div className="glass-card p-4 md:p-6 mb-6 md:mb-8" style={{ background: "var(--bg-card)" }}>
-                        <div className="flex items-center justify-between mb-4 md:mb-6">
-                            <h3 className="font-semibold">Macro On-Chain Intelligence</h3>
-                            <span className="px-3 py-1 text-xs font-medium rounded-lg" style={{ background: "var(--green-glow)", color: "var(--green)" }}>
-                                Powered by Dune
-                            </span>
-                        </div>
-                        <div className="w-full bg-neutral-900 rounded-lg overflow-hidden border" style={{ borderColor: 'var(--border)' }}>
-                            <iframe
-                                src="https://dune.com/embeds/2699818"
-                                width="100%"
-                                height="400"
-                                title="Aave V3 - Base Market"
-                                className="border-0"
-                            />
-                        </div>
-                        <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
-                            Live integration showing total Base chain adoption metrics, directly correlating to Aerodrome and Aave vault growth opportunities.
-                        </p>
+                    {/* Native On-Chain Health (Replaces Dune Iframe) */}
+                    <div className="mb-6 md:mb-8">
+                        <AaveHealth health={liveData?.aaveV3Health} />
                     </div>
 
                     {/* Pie Charts Row */}
