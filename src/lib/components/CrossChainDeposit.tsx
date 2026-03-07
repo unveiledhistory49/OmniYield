@@ -101,7 +101,7 @@ export function CrossChainDeposit() {
                 {!showWidget ? (
                     <button
                         onClick={openWidget}
-                        className="w-full bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-bold py-4 rounded-2xl hover:scale-105 transition-all flex items-center justify-center gap-2"
+                        className="w-full bg-gradient-to-r from-[#00ff66] to-[#00cc52] text-[#020402] font-bold py-4 rounded-2xl hover:scale-105 transition-all flex items-center justify-center gap-2"
                     >
                         🚀 Deposit to Solana Vault (from Base)
                     </button>

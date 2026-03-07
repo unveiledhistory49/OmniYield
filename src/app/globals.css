@@ -1,75 +1,75 @@
 @import "tailwindcss";
 
 /* ============================================
-   OmniYield Design System — Apple-esque Dark
-   Pure black canvas, white typography, minimal accent
+   OmniYield Design System — Deep Inky Black & Green
+   Pure black canvas, green/white typography, rich green accent
    ============================================ */
 
 :root {
-  /* Backgrounds — pure black spectrum */
-  --bg-primary: #000000;
-  --bg-secondary: #0a0a0a;
-  --bg-tertiary: #111111;
-  --bg-card: #1a1a1a;
-  --bg-card-hover: #222222;
-  --bg-elevated: #2a2a2a;
+  /* Backgrounds — deep inky black spectrum */
+  --bg-primary: #020402;    /* Purest dark tint */
+  --bg-secondary: #050805;  /* Slightly raised */
+  --bg-tertiary: #080b08;
+  --bg-card: #040704;       /* Base cards */
+  --bg-card-hover: #070b07;
+  --bg-elevated: #0a100a;
 
-  /* Text — Apple SF-style hierarchy */
-  --text-primary: #f5f5f7;
-  --text-secondary: #86868b;
-  --text-tertiary: #48484a;
-  --text-muted: #333333;
+  /* Text — slightly cool crisp whites/greens */
+  --text-primary: #eefcf2;
+  --text-secondary: #a3ccb0;
+  --text-tertiary: #6b9978;
+  --text-muted: #3a5c44;
 
-  /* Accent — Apple blue (used sparingly) */
-  --accent: #0A84FF;
-  --accent-dim: #0071e3;
-  --accent-glow: rgba(10, 132, 255, 0.12);
+  /* Accent — Rich energetic green */
+  --accent: #00ff66;
+  --accent-dim: #00cc52;
+  --accent-glow: rgba(0, 255, 102, 0.15);
 
   /* Semantic */
-  --green: #30D158;
-  --green-dim: #28a745;
-  --green-glow: rgba(48, 209, 88, 0.10);
-  --red: #FF453A;
-  --red-dim: #d63031;
-  --red-glow: rgba(255, 69, 58, 0.10);
-  --yellow: #FFD60A;
-  --orange: #FF9F0A;
+  --green: #00ff66;
+  --green-dim: #00cc52;
+  --green-glow: rgba(0, 255, 102, 0.10);
+  --red: #ff3333;
+  --red-dim: #cc0000;
+  --red-glow: rgba(255, 51, 51, 0.10);
+  --yellow: #ffea00;
+  --orange: #ff9100;
 
-  /* Legacy alias for components still using --cyan */
-  --cyan: #0A84FF;
-  --cyan-dim: #0071e3;
-  --cyan-glow: rgba(10, 132, 255, 0.12);
-  --purple: #BF5AF2;
-  --purple-dim: #9945ff;
-  --purple-glow: rgba(191, 90, 242, 0.10);
+  /* Legacy alias for components still using --cyan or --purple */
+  --cyan: #00ff66;
+  --cyan-dim: #00cc52;
+  --cyan-glow: rgba(0, 255, 102, 0.12);
+  --purple: #00ff66;
+  --purple-dim: #00cc52;
+  --purple-glow: rgba(0, 255, 102, 0.10);
 
   /* Chain colors */
-  --solana: #9945ff;
-  --solana-glow: rgba(153, 69, 255, 0.10);
+  --solana: #00ff66;
+  --solana-glow: rgba(0, 255, 102, 0.10);
   --base-chain: #0052ff;
   --base-glow: rgba(0, 82, 255, 0.10);
 
   /* Surfaces */
-  --border: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 255, 255, 0.12);
-  --glass: rgba(255, 255, 255, 0.04);
-  --glass-hover: rgba(255, 255, 255, 0.06);
+  --border: rgba(0, 255, 102, 0.12);
+  --border-hover: rgba(0, 255, 102, 0.25);
+  --glass: rgba(0, 255, 102, 0.03);
+  --glass-hover: rgba(0, 255, 102, 0.05);
 
-  /* Gradients — minimal */
-  --gradient-primary: linear-gradient(135deg, #f5f5f7 0%, #86868b 100%);
-  --gradient-green: linear-gradient(135deg, #30D158 0%, #28a745 100%);
-  --gradient-hero: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
-  --gradient-card: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 100%);
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #eefcf2 0%, #a3ccb0 100%);
+  --gradient-green: linear-gradient(135deg, #00ff66 0%, #00cc52 100%);
+  --gradient-hero: linear-gradient(180deg, #020402 0%, #050805 100%);
+  --gradient-card: linear-gradient(180deg, rgba(0,255,102,0.03) 0%, rgba(0,255,102,0.00) 100%);
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.7);
-  --shadow-glow-cyan: 0 0 20px rgba(10, 132, 255, 0.15);
-  --shadow-glow-green: 0 0 20px rgba(48, 209, 88, 0.15);
-  --shadow-glow-purple: 0 0 20px rgba(191, 90, 242, 0.15);
+  --shadow-sm: 0 1px 2px rgba(0, 50, 20, 0.5);
+  --shadow-md: 0 4px 12px rgba(0, 50, 20, 0.6);
+  --shadow-lg: 0 8px 28px rgba(0, 50, 20, 0.7);
+  --shadow-glow-cyan: 0 0 20px rgba(0, 255, 102, 0.15);
+  --shadow-glow-green: 0 0 20px rgba(0, 255, 102, 0.20);
+  --shadow-glow-purple: 0 0 20px rgba(0, 255, 102, 0.15);
 
-  /* Radius — larger, softer */
+  /* Radius — Apple-like */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -135,26 +135,26 @@ h1, h2, h3, h4, h5, h6 {
    Gradient Text — use sparingly
    ============================================ */
 .gradient-text {
-  background: linear-gradient(135deg, #f5f5f7 0%, #86868b 100%);
+  background: linear-gradient(135deg, #eefcf2 0%, #a3ccb0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-text-green {
-  background: linear-gradient(135deg, #30D158 0%, #28a745 100%);
+  background: linear-gradient(135deg, #00ff66 0%, #00cc52 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 /* ============================================
-   Buttons — Apple-clean
+   Buttons — Rich Green Aesthetic
    ============================================ */
 .btn-primary {
-  background: #f5f5f7;
-  color: #000000;
-  font-weight: 600;
+  background: #00ff66;
+  color: #020402;
+  font-weight: 700;
   border: none;
   border-radius: var(--radius-full);
   padding: 12px 28px;
@@ -162,12 +162,13 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.2s ease;
   font-size: 0.9rem;
   letter-spacing: -0.01em;
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.15);
 }
 
 .btn-primary:hover {
-  background: #ffffff;
+  background: #33ff85;
   transform: scale(1.02);
-  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 255, 102, 0.3);
 }
 
 .btn-primary:active {
@@ -187,14 +188,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 255, 102, 0.06);
+  border-color: rgba(0, 255, 102, 0.4);
 }
 
 .btn-green {
-  background: #f5f5f7;
-  color: #000000;
-  font-weight: 600;
+  background: #00ff66;
+  color: #020402;
+  font-weight: 700;
   border: none;
   border-radius: var(--radius-full);
   padding: 14px 32px;
@@ -202,12 +203,13 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.2s ease;
   font-size: 1rem;
   letter-spacing: -0.01em;
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.2);
 }
 
 .btn-green:hover {
-  background: #ffffff;
+  background: #33ff85;
   transform: scale(1.02);
-  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 24px rgba(0, 255, 102, 0.4);
 }
 
 .btn-green:active {
@@ -338,7 +340,7 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: #000000;
+  background: radial-gradient(circle at 50% 0%, rgba(0, 255, 102, 0.05) 0%, #020402 60%);
 }
 
 /* ============================================
