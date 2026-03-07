@@ -26,7 +26,7 @@ const TARGETS = [
 ];
 
 const AAVE_DATA_PROVIDER_ADDRESS = "0xBc9f5b7E248451CdD7cA54e717a2BFe1F32b566b";
-const USDC_ADDR = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
+const USDC_ADDR = "0xba50Cd2A20f6DA35D788639E581bca8d0B5d4D5f";
 
 const DATA_PROVIDER_ABI = [{
     "inputs": [{ "internalType": "address", "name": "asset", "type": "address" }],
