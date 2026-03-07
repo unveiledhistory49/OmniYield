@@ -25,31 +25,26 @@ const TARGETS = [
     { name: 'Marinade SOL', project: 'marinade', chain: 'Solana', symbol: 'MSOL' },
 ];
 
-const AAVE_POOL_ADDRESS = "0x8bAB6d1b75f19e9eD9fCe8b9BD338844fF79aE27";
+const AAVE_DATA_PROVIDER_ADDRESS = "0xBc9f5b7E248451CdD7cA54e717a2BFe1F32b566b";
 const USDC_ADDR = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
 
-const POOL_ABI = [{
+const DATA_PROVIDER_ABI = [{
     "inputs": [{ "internalType": "address", "name": "asset", "type": "address" }],
     "name": "getReserveData",
-    "outputs": [{
-        "components": [
-            { "internalType": "uint256", "name": "unbacked", "type": "uint256" },
-            { "internalType": "uint256", "name": "accruedToTreasuryScaled", "type": "uint256" },
-            { "internalType": "uint256", "name": "totalAToken", "type": "uint256" },
-            { "internalType": "uint256", "name": "totalStableDebt", "type": "uint256" },
-            { "internalType": "uint256", "name": "totalVariableDebt", "type": "uint256" },
-            { "internalType": "uint256", "name": "liquidityRate", "type": "uint256" },
-            { "internalType": "uint256", "name": "variableBorrowRate", "type": "uint256" },
-            { "internalType": "uint256", "name": "stableBorrowRate", "type": "uint256" },
-            { "internalType": "uint256", "name": "averageStableBorrowRate", "type": "uint256" },
-            { "internalType": "uint256", "name": "liquidityIndex", "type": "uint256" },
-            { "internalType": "uint256", "name": "variableBorrowIndex", "type": "uint256" },
-            { "internalType": "uint256", "name": "lastUpdateTimestamp", "type": "uint40" }
-        ],
-        "internalType": "struct DataTypes.ReserveData",
-        "name": "",
-        "type": "tuple"
-    }],
+    "outputs": [
+        { "name": "unbacked", "type": "uint256" },
+        { "name": "accruedToTreasuryScaled", "type": "uint256" },
+        { "name": "totalAToken", "type": "uint256" },
+        { "name": "totalStableDebt", "type": "uint256" },
+        { "name": "totalVariableDebt", "type": "uint256" },
+        { "name": "liquidityRate", "type": "uint256" },
+        { "name": "variableBorrowRate", "type": "uint256" },
+        { "name": "stableBorrowRate", "type": "uint256" },
+        { "name": "averageStableBorrowRate", "type": "uint256" },
+        { "name": "liquidityIndex", "type": "uint256" },
+        { "name": "variableBorrowIndex", "type": "uint256" },
+        { "name": "lastUpdateTimestamp", "type": "uint40" }
+    ],
     "stateMutability": "view",
     "type": "function"
 }] as const;
@@ -92,21 +87,22 @@ export async function GET(request: Request) {
         const res = await fetchWithRetry('https://yields.llama.fi/pools');
         const { data }: { data: DefiLlamaPool[] } = await res.json();
 
-        // 2. Fetch Live Aave V3 Data from Base Sepolia
-        const aaveData: any = await client.readContract({
-            address: AAVE_POOL_ADDRESS,
-            abi: POOL_ABI,
+        // 2. Fetch Live Aave V3 Data from Base Sepolia Protocol Data Provider
+        const aaveDataResults: any = await client.readContract({
+            address: AAVE_DATA_PROVIDER_ADDRESS,
+            abi: DATA_PROVIDER_ABI,
             functionName: 'getReserveData',
             args: [USDC_ADDR as `0x${string}`],
         });
 
+        // 0: unbacked, 1: accruedToTreasuryScaled, 2: totalAToken, 3: totalStableDebt, 4: totalVariableDebt, 5: liquidityRate...
         const RAY = BigInt("1000000000000000000000000000"); // 10^27
-        const liquidityRate = BigInt(aaveData.liquidityRate);
+        const liquidityRate = BigInt(aaveDataResults[5]);
         const liveAaveApy = (Number(liquidityRate) / Number(RAY)) * 100;
 
-        const totalDebt = BigInt(aaveData.totalStableDebt) + BigInt(aaveData.totalVariableDebt);
-        const totalLiquidity = BigInt(aaveData.totalAToken);
-        const utilization = totalLiquidity > 0
+        const totalDebt = BigInt(aaveDataResults[3]) + BigInt(aaveDataResults[4]);
+        const totalLiquidity = BigInt(aaveDataResults[2]);
+        const utilization = totalLiquidity > 0n
             ? (Number(totalDebt) / Number(totalLiquidity)) * 100
             : 0;
 
@@ -114,11 +110,12 @@ export async function GET(request: Request) {
             aaveV3Health: {
                 liveApy: liveAaveApy,
                 utilization: utilization,
-                totalLiquidity: formatUnits(totalLiquidity, 18), // USDC mock is 18
-                totalDebt: formatUnits(totalDebt, 18),
+                totalLiquidity: formatUnits(totalLiquidity, 6), // Base Sepolia USDC has 6 decimals
+                totalDebt: formatUnits(totalDebt, 6),
                 timestamp: now
             }
         };
+
 
         for (const target of TARGETS) {
             let matches = data.filter((p) => {
