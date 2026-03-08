@@ -28,6 +28,10 @@ export const VAULT_ABI = [
     { "inputs": [], "name": "performanceFeeBps", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
     { "inputs": [], "name": "MAX_FEE_BPS", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
     { "inputs": [], "name": "FEE_DENOMINATOR", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
+    { "inputs": [], "name": "liquidityBufferBps", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
+    // ── Referral Views ──
+    { "inputs": [{ "internalType": "address", "name": "user", "type": "address" }], "name": "referrers", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" },
+    { "inputs": [{ "internalType": "address", "name": "referrer", "type": "address" }], "name": "referrerPoints", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
     // ── Harvest Tracking Views ──
     { "inputs": [], "name": "lastHarvestTimestamp", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
     { "inputs": [], "name": "totalHarvestedProfit", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
@@ -37,6 +41,7 @@ export const VAULT_ABI = [
     { "inputs": [], "name": "strategy", "outputs": [{ "internalType": "contract IStrategy", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" },
     // ── Mutative ──
     { "inputs": [{ "internalType": "uint256", "name": "assets", "type": "uint256" }, { "internalType": "address", "name": "receiver", "type": "address" }], "name": "deposit", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" },
+    { "inputs": [{ "internalType": "uint256", "name": "assets", "type": "uint256" }, { "internalType": "address", "name": "receiver", "type": "address" }, { "internalType": "address", "name": "referrer", "type": "address" }], "name": "depositWithReferral", "outputs": [{ "internalType": "uint256", "name": "shares", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" },
     { "inputs": [{ "internalType": "uint256", "name": "assets", "type": "uint256" }, { "internalType": "address", "name": "receiver", "type": "address" }, { "internalType": "address", "name": "owner", "type": "address" }], "name": "withdraw", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" },
     { "inputs": [], "name": "harvest", "outputs": [{ "internalType": "uint256", "name": "profit", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" },
     { "inputs": [], "name": "compound", "outputs": [{ "internalType": "uint256", "name": "profit", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" },

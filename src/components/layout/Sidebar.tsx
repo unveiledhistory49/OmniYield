@@ -11,6 +11,7 @@ import {
     BarChart3,
     Settings,
     ChevronRight,
+    Users,
 } from "lucide-react";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -19,6 +20,7 @@ const iconMap: Record<string, React.ElementType> = {
     PieChart,
     BarChart3,
     Settings,
+    Users,
 };
 
 const navItems = [
@@ -26,6 +28,7 @@ const navItems = [
     { label: "Vaults", href: "/vaults", icon: "Vault" },
     { label: "Portfolio", href: "/portfolio", icon: "PieChart" },
     { label: "Analytics", href: "/analytics", icon: "BarChart3" },
+    { label: "Referrals", href: "/referrals", icon: "Users" },
     { label: "Settings", href: "/settings", icon: "Settings" },
 ];
 

@@ -58,6 +58,20 @@ export function useOmniYield() {
         functionName: "lastHarvestTimestamp",
     });
 
+    const { data: referrerPoints } = useReadContract({
+        address: SEPOLIA_VAULT_ADDRESS,
+        abi: VAULT_ABI,
+        functionName: "referrerPoints",
+        args: address ? [address] : undefined,
+        query: { enabled: !!address },
+    });
+
+    const { data: liquidityBufferBps } = useReadContract({
+        address: SEPOLIA_VAULT_ADDRESS,
+        abi: VAULT_ABI,
+        functionName: "liquidityBufferBps",
+    });
+
     const { data: totalHarvestedProfit } = useReadContract({
         address: SEPOLIA_VAULT_ADDRESS,
         abi: VAULT_ABI,
@@ -111,6 +125,15 @@ export function useOmniYield() {
         });
     }, [writeContract]);
 
+    const depositWithReferral = useCallback((assets: string, referrer: string) => {
+        writeContract({
+            address: SEPOLIA_VAULT_ADDRESS,
+            abi: VAULT_ABI,
+            functionName: "depositWithReferral",
+            args: [parseUnits(assets, SEPOLIA_USDC_DECIMALS), address!, referrer as `0x${string}`],
+        });
+    }, [address, writeContract]);
+
     return {
         data: {
             totalAssets,
@@ -128,12 +151,15 @@ export function useOmniYield() {
             totalHarvestedProfit,
             totalFeesCollected,
             strategy,
+            referrerPoints,
+            liquidityBufferBps,
         },
         actions: {
             mintMockTokens,
             withdraw,
             harvest,
             compound,
+            depositWithReferral,
         }
     };
 }

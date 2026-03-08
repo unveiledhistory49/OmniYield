@@ -34,7 +34,7 @@ const pimlicoClient = createPimlicoClient({
     entryPoint: entryPoint,
 })
 
-export function GaslessDeposit({ amount, onSuccess, onError }: { amount: string, onSuccess?: () => void, onError?: (msg: string) => void }) {
+export function GaslessDeposit({ amount, referrer, onSuccess, onError }: { amount: string, referrer?: string, onSuccess?: () => void, onError?: (msg: string) => void }) {
     const { address, chainId } = useAccount()
     const { data: walletClient } = useWalletClient()
     const { switchChainAsync } = useSwitchChain()
@@ -104,11 +104,17 @@ export function GaslessDeposit({ amount, onSuccess, onError }: { amount: string,
                 args: [SEPOLIA_VAULT_ADDRESS, parsedAmount],
             });
 
-            const depositData = encodeFunctionData({
-                abi: VAULT_ABI,
-                functionName: "deposit",
-                args: [parsedAmount, smartAccount.address], // Receiver is the smart account itself
-            });
+            const depositData = referrer && referrer.length === 42 && referrer.startsWith("0x")
+                ? encodeFunctionData({
+                    abi: VAULT_ABI,
+                    functionName: "depositWithReferral",
+                    args: [parsedAmount, smartAccount.address, referrer as `0x${string}`],
+                })
+                : encodeFunctionData({
+                    abi: VAULT_ABI,
+                    functionName: "deposit",
+                    args: [parsedAmount, smartAccount.address], // Receiver is the smart account itself
+                });
 
             // 5. Send gasless!
             const userOpHash = await smartAccountClient.sendUserOperation({
