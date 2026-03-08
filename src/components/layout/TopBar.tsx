@@ -82,95 +82,102 @@ export default function TopBar({ chain, onChainChange }: TopBarProps) {
 
             {/* Right: Controls */}
             {isMobile ? (
-                /* ─── Mobile: Single button with 2-step connect flow ─── */
+                /* ─── Mobile: Wallet Button with Dropdown ─── */
                 <div className="relative" ref={dropdownRef}>
                     {isConnected ? (
-                        /* Connected state: show address + disconnect */
-                        <div className="flex items-center gap-1.5">
-                            <div
-                                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium"
-                                style={{
-                                    background: "var(--glass)",
-                                    border: "1px solid var(--border)",
-                                    color: "var(--text-primary)",
-                                }}
-                            >
-                                <div className="w-2 h-2 rounded-full" style={{ background: "var(--green)" }} />
-                                {displayAddress?.slice(0, 4)}...{displayAddress?.slice(-4)}
-                            </div>
-                            <button
-                                onClick={disconnect}
-                                className="p-2 rounded-lg cursor-pointer"
-                                style={{
-                                    background: "var(--glass)",
-                                    border: "1px solid var(--border)",
-                                    color: "var(--text-secondary)",
-                                }}
-                            >
-                                <LogOut size={14} />
-                            </button>
-                        </div>
+                        /* Connected state: show address and allow clicking to switch chains */
+                        <button
+                            onClick={() => setShowDropdown(!showDropdown)}
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium cursor-pointer transition-colors"
+                            style={{
+                                background: "var(--glass)",
+                                border: "1px solid var(--border)",
+                                color: "var(--text-primary)",
+                            }}
+                        >
+                            <div className="w-2 h-2 rounded-full" style={{ background: "var(--green)" }} />
+                            {displayAddress?.slice(0, 4)}...{displayAddress?.slice(-4)}
+                            <ChevronDown
+                                size={12}
+                                className="ml-1 transition-transform duration-200"
+                                style={{ transform: showDropdown ? "rotate(180deg)" : "none", color: "var(--text-secondary)" }}
+                            />
+                        </button>
                     ) : (
-                        /* Not connected: Connect button + dropdown */
-                        <>
-                            <button
-                                onClick={() => setShowDropdown(!showDropdown)}
-                                className="flex items-center gap-1.5 px-4 py-2 rounded-full font-medium text-sm cursor-pointer"
+                        /* Not connected: Connect button */
+                        <button
+                            onClick={() => setShowDropdown(!showDropdown)}
+                            className="flex items-center gap-1.5 px-4 py-2 rounded-full font-medium text-sm cursor-pointer transition-transform active:scale-95"
+                            style={{
+                                background: "var(--text-primary)",
+                                color: "#000000",
+                            }}
+                        >
+                            <Wallet size={14} />
+                            Connect
+                            <ChevronDown
+                                size={12}
+                                className="transition-transform duration-200"
+                                style={{ transform: showDropdown ? "rotate(180deg)" : "none" }}
+                            />
+                        </button>
+                    )}
+
+                    {/* Dropdown: Chain Options + Disconnect */}
+                    <AnimatePresence>
+                        {showDropdown && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                                transition={{ duration: 0.15 }}
+                                className="absolute right-0 top-full mt-2 w-48 rounded-xl overflow-hidden shadow-2xl z-50"
                                 style={{
-                                    background: "var(--text-primary)",
-                                    color: "#000000",
+                                    background: "var(--bg-card)",
+                                    border: "1px solid var(--border)",
+                                    boxShadow: "0 10px 40px rgba(0,0,0,0.5)",
                                 }}
                             >
-                                <Wallet size={14} />
-                                Connect
-                                <ChevronDown
-                                    size={12}
-                                    className="transition-transform duration-200"
-                                    style={{ transform: showDropdown ? "rotate(180deg)" : "none" }}
-                                />
-                            </button>
-
-                            {/* Dropdown: just two options */}
-                            <AnimatePresence>
-                                {showDropdown && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                                        transition={{ duration: 0.15 }}
-                                        className="absolute right-0 top-full mt-2 w-48 rounded-xl overflow-hidden"
+                                <button
+                                    onClick={() => handleChainConnect("solana")}
+                                    className="w-full flex items-center gap-3 px-4 py-3.5 text-sm transition-colors cursor-pointer hover:bg-white/5"
+                                    style={{
+                                        color: "var(--text-secondary)",
+                                        borderBottom: "1px solid var(--border)",
+                                    }}
+                                >
+                                    <span className="text-base">◎</span>
+                                    Connect Solana
+                                </button>
+                                <button
+                                    onClick={() => handleChainConnect("base")}
+                                    className="w-full flex items-center gap-3 px-4 py-3.5 text-sm transition-colors cursor-pointer hover:bg-white/5"
+                                    style={{
+                                        color: "var(--text-secondary)",
+                                        ...(isConnected ? { borderBottom: "1px solid var(--border)" } : {})
+                                    }}
+                                >
+                                    <span className="text-base">Ⓑ</span>
+                                    Connect Base
+                                </button>
+                                {isConnected && (
+                                    <button
+                                        onClick={() => {
+                                            disconnect();
+                                            setShowDropdown(false);
+                                        }}
+                                        className="w-full flex items-center gap-3 px-4 py-3.5 text-sm transition-colors cursor-pointer hover:bg-white/5"
                                         style={{
-                                            background: "var(--bg-card)",
-                                            border: "1px solid var(--border)",
-                                            boxShadow: "var(--shadow-lg)",
+                                            color: "var(--red)",
                                         }}
                                     >
-                                        <button
-                                            onClick={() => handleChainConnect("solana")}
-                                            className="w-full flex items-center gap-3 px-4 py-3.5 text-sm transition-colors cursor-pointer hover:opacity-80"
-                                            style={{
-                                                color: "var(--text-secondary)",
-                                                borderBottom: "1px solid var(--border)",
-                                            }}
-                                        >
-                                            <span className="text-base">◎</span>
-                                            Connect Solana
-                                        </button>
-                                        <button
-                                            onClick={() => handleChainConnect("base")}
-                                            className="w-full flex items-center gap-3 px-4 py-3.5 text-sm transition-colors cursor-pointer hover:opacity-80"
-                                            style={{
-                                                color: "var(--text-secondary)",
-                                            }}
-                                        >
-                                            <span className="text-base">Ⓑ</span>
-                                            Connect Base
-                                        </button>
-                                    </motion.div>
+                                        <LogOut size={16} />
+                                        Disconnect
+                                    </button>
                                 )}
-                            </AnimatePresence>
-                        </>
-                    )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             ) : (
                 /* ─── Desktop: Full controls (unchanged) ─── */
